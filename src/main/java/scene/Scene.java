@@ -6,6 +6,7 @@ import geometry.Geometry;
 import light.Light;
 import math.RGBSpectrum;
 
+import java.text.Format;
 import java.util.Collections;
 import java.util.LinkedList;
 

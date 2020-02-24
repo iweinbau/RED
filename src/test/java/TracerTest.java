@@ -28,7 +28,7 @@ import java.util.Random;
 
 public class TracerTest {
 
-    int MAX_OBJECTS = 1000;
+    int MAX_OBJECTS = 600;
     int NUM_TRIALS = 3;
     int width = 800;
     int height = 800;
@@ -68,7 +68,7 @@ public class TracerTest {
         renderer.addRenderEventListener(reporter);
 
         int prevInt = 0;
-        for (int i = 1; i <= MAX_OBJECTS; i+=50) {
+        for (int i = 0; i <= MAX_OBJECTS; i+=50) {
             writer.write(String.format("%d ",i));
             System.out.println(String.format("%d ",i));
             for (int j = 0; j < i-prevInt; j++) {
@@ -136,7 +136,7 @@ public class TracerTest {
         renderer.addRenderEventListener(reporter);
 
         int prevInt = 0;
-        for (int i = 1000; i <= MAX_OBJECTS; i+=50) {
+        for (int i = 0; i <= MAX_OBJECTS; i+=50) {
             writer.write(String.format("%d ",i));
             System.out.println(String.format("%d ",i));
             for (int j = 0; j < i-prevInt; j++) {
@@ -202,7 +202,7 @@ public class TracerTest {
 
         renderer.addRenderEventListener(reporter);
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10; i++) {
             Transform Tobj = new Transform();
             Tobj.scale(radius);
             Tobj.translate(new Point3D(
@@ -224,9 +224,9 @@ public class TracerTest {
             for (int j = 0; j < i-prevInt; j++) {
                 Transform lightT = new Transform();
                 lightT.translate(new Point3D(
-                                1 - 2 * rand.nextDouble() * 2,
-                                1 - 2 * rand.nextDouble() * 2,
-                                1 - 2 * rand.nextDouble() * 2));
+                                1 - 2 * rand.nextDouble(),
+                                1 - 2 * rand.nextDouble(),
+                                1 - 2 * rand.nextDouble()));
                 scene.addLight(new PointLight(new RGBSpectrum(1),lightT));
             }
 
