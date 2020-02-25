@@ -8,8 +8,7 @@ import scene.Scene;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
- *
- * PathNode represent node in the eye-path.
+ * PathNode represent node in a path.
  */
 public abstract class PathNode{
 

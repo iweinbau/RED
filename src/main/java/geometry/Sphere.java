@@ -9,14 +9,29 @@ import math.Vector3D;
 
 public class Sphere  extends Geometry{
 
+    /**
+     * Construct new Sphere object
+     * @param transform
+     * @param material
+     */
     public Sphere(Transform transform, Material material) {
         super(transform, material);
     }
 
+    /**
+     * Construct new sphere object.
+     * @param transform
+     */
     public Sphere(Transform transform) {
         super(transform);
     }
 
+    /**
+     *
+     * @param ray the ray to check against.
+     * @param hitRecord hit record object for returning hit information.
+     * @return
+     */
     @Override
     public boolean intersect(Ray ray,HitRecord hitRecord) {
         Ray localRay = transform.globalToLocal(ray);

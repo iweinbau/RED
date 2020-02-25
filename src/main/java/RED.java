@@ -3,10 +3,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
 
 import camera.PerspectiveCamera;
-import geometry.Box;
-import geometry.Composite;
-import geometry.Sphere;
-import geometry.TriangleMesh;
+import geometry.*;
 import gui.ProgressReporter;
 import gui.RenderFrame;
 import integrator.DirectLightIntegrator;
@@ -185,25 +182,53 @@ public class RED {
 
 		Random rand = new Random();
 		Transform objT = new Transform();
-		objT.rotate(new Vector3D(
-				90 * rand.nextDouble(),
-				90 * rand.nextDouble(),
-				90 * rand.nextDouble()));
 
+		// CUBE DEMO:
+//		objT.rotate(new Vector3D(
+//				90 * rand.nextDouble(),
+//				90 * rand.nextDouble(),
+//				90 * rand.nextDouble()));
+//		Box s = new Box(objT,new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1)));
+//		scene.addGeometry(s);
+
+//		// SPHERE DEMO
+//		objT = new Transform();
+//		objT.rotateX(90);
+//		objT.translate(new Point3D(0,0,-2));
+//		Plane p1 = new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1)));
+//		scene.addGeometry(p1);
+//		objT = new Transform();
+//		objT.translate(new Point3D(0,-1,0));
+//		Plane p2 = new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1)));
+//		scene.addGeometry(p2);
+//		objT = new Transform();
+//		Sphere s = new Sphere(objT,new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1)));
+//		scene.addGeometry(s);
+
+
+		// TRIANGLE SPHERE DEMO SMOOTH
 //		MeshFactory factory = new MeshFactory();
-////		TriangleMesh mesh = factory.getTriangleMesh("flat.obj");
+////		TriangleMesh mesh = factory.getTriangleMesh("smoothSphere.obj");
 ////		Composite comp = new Composite(objT,mesh,
 ////				new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1)));
 ////
 ////		scene.addGeometry(comp);
 
-		Box s = new Box(objT,new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1)));
-		scene.addGeometry(s);
+		// TRIANGLE SPHERE DEMO FLAT
+		MeshFactory factory = new MeshFactory();
+		TriangleMesh mesh = factory.getTriangleMesh("flatSphere.obj");
+		Composite comp = new Composite(objT,mesh,
+				new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1)));
+		scene.addGeometry(comp);
 
 		Transform lightT;
 		lightT = new Transform();
 		lightT.translate(new Point3D(2,3,3));
 		scene.addLight(new PointLight(new RGBSpectrum(1),lightT));
+
+		lightT = new Transform();
+		lightT.translate(new Point3D(-2,0,3));
+		//scene.addLight(new PointLight(new RGBSpectrum(1,1,0),lightT));
 
 	}
 }

@@ -155,6 +155,6 @@ public class Transform implements ITransform {
     public Ray globalToLocal(Ray ray) {
         Point3D p = inverseT.multiply(ray.getOrigin());
         Vector3D dir = inverseT.multiply(ray.getDirection());
-        return new Ray(p,dir);
+        return new Ray(p,dir,ray.getMaxDistance());
     }
 }

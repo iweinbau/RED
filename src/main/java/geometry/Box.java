@@ -8,19 +8,44 @@ import math.Normal;
 import math.Point3D;
 import math.Transform;
 
+/**
+ * Class representing Axis aligned box
+ */
 public class Box extends Geometry{
 
+    /**
+     * Box minimum point
+     */
     final Point3D p1 = new Point3D(-1, -1, -1);
+    /**
+     * Box maximum point
+     */
     final Point3D p2 = new Point3D(1, 1, 1);
 
+    /**
+     * Construct new Box with a given transformation and material.
+     * @param transform
+     * @param material
+     */
     public Box(Transform transform, Material material) {
         super(transform, material);
     }
 
+    /**
+     * Construct new Box with a given transformation and material.
+     * @param transform
+     */
     public Box(Transform transform) {
         super(transform);
     }
 
+    /**
+     *
+     * Ray box intersection.
+     * @param ray the ray to check against.
+     * @param hitRecord hit record object for returning hit information.
+     * @return true if the ray intersect this box, false otherwise.
+     */
     @Override
     public boolean intersect(Ray ray, HitRecord hitRecord) {
         Ray localRay = transform.globalToLocal(ray);

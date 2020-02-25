@@ -12,10 +12,22 @@ import scene.Scene;
  */
 public class DirectLightIntegrator extends Integrator {
 
+    /**
+     * Construct new DirectLightIntegrator
+     * @param sampler a sampler class to get samples from
+     */
     public DirectLightIntegrator(Sampler sampler) {
         super(sampler);
     }
 
+    /**
+     *
+     *
+     * Compute radiance along path starting from an eyeNode in a given scene.
+     * @param eyeNode starting node in path.
+     * @param scene scene to trace rays in.
+     * @return RGBSpectrum computed radiance.
+     */
     @Override
     public RGBSpectrum computeRadiance(EyeNode eyeNode, Scene scene) {
         RGBSpectrum L = RGBSpectrum.BLACK;

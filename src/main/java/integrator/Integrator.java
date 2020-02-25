@@ -13,13 +13,28 @@ import scene.Scene;
  */
 public abstract class Integrator {
 
+    /**
+     * Sampler object to get samples from.
+     */
     Sampler sampler;
 
+    /**
+     *
+     * Construct new Integrator class with given sampler object.
+     * @param sampler
+     */
     public Integrator(Sampler sampler) {
         this.sampler = sampler;
     }
 
+    /**
+     *
+     * @param eyeNode starting node in path.
+     * @param scene scene to trace rays in.
+     * @return RGBSpectrum computed radiance.
+     */
     public abstract RGBSpectrum computeRadiance(EyeNode eyeNode, Scene scene);
+
 
     // TODO: add other way of sampling lights eg. sampleOneLight or sampleAllLights
     // By first picking a light using some distribution and after this sampling from the picked light.

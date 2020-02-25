@@ -5,7 +5,11 @@ import math.Vector3D;
 import scene.Scene;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+/**
+ * Node for paths disappearing into the background.
+ */
 public class BackgroundNode extends ScatterNode {
+
     public BackgroundNode(Vector3D wo, PathNode parent) {
         super(null,wo,null,parent);
     }

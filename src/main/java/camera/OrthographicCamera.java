@@ -6,6 +6,7 @@ import film.ViewPlane;
 import math.Point3D;
 import math.Vector3D;
 import pathnode.EyeNode;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class OrthographicCamera extends Camera {
 
@@ -22,6 +23,6 @@ public class OrthographicCamera extends Camera {
 
     @Override
     public Vector3D viewDirection(Sample sample) {
-        return null;
+        throw new NotImplementedException();
     }
 }

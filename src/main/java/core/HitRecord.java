@@ -12,6 +12,7 @@ import pathnode.SurfaceNode;
 /**
  *
  * Class for representing surface hits.
+ *
  */
 public class HitRecord {
 

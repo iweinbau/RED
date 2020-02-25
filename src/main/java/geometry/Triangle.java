@@ -8,10 +8,30 @@ import math.*;
 
 public class Triangle extends Geometry {
 
+    /**
+     * Triangle points in local space.
+     */
     Point3D p0,p1,p2;
+
+    /**
+     * Triangle normal in local space.
+     */
     Normal n0,n1,n2;
+
+    /**
+     * reference to triangle mesh.
+     */
     TriangleMesh mesh;
 
+    /**
+     * Construct new triangle from triangle mesh.
+     * @param p0 index first point.
+     * @param p1 index second point.
+     * @param p2 index third point
+     * @param mesh reference to the Triangle mesh
+     * @param transform object transform.
+     * @param material object material.
+     */
     public Triangle(int p0, int p1, int p2, TriangleMesh mesh, Transform transform, Material material) {
         super(transform, material);
         this.p0 = mesh.getVertices(p0);
@@ -23,6 +43,14 @@ public class Triangle extends Geometry {
         this.mesh = mesh;
     }
 
+    /**
+     * Construct new triangle object
+     * @param p0 First point in local space
+     * @param p1 Second point in local space
+     * @param p2 Third point in local space
+     * @param transform triangle transformation.
+     * @param material material transformation.
+     */
     public Triangle(Point3D p0, Point3D p1, Point3D p2, Transform transform, Material material) {
         super(transform, material);
         this.p0 = p0;
@@ -31,6 +59,12 @@ public class Triangle extends Geometry {
         this.n0 = p1.subtract(p0).cross(p2.subtract(p0)).normalize().toNormal();
     }
 
+    /**
+     *
+     * @param ray the ray to check against.
+     * @param hitRecord hit record object for returning hit information.
+     * @return
+     */
     @Override
     public boolean intersect(Ray ray, HitRecord hitRecord) {
 

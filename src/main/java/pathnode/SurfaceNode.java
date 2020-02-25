@@ -4,6 +4,9 @@ import geometry.Geometry;
 import math.*;
 import scene.Scene;
 
+/**
+ * Node at a the surface of geometry.
+ */
 public class SurfaceNode extends ScatterNode {
 
     Geometry geometry;

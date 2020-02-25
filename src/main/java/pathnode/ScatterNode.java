@@ -7,18 +7,18 @@ import math.Vector3D;
 
 /**
  *
- * Path node type other than eye nodes. It can either be on a surface or disappearing into the background.
+ * t can either be on a surface or disappearing into the background.
  *
  */
 public abstract class ScatterNode extends PathNode {
 
     /**
-     *
+     * surface normal at position, null if it is a background node.
      */
     Normal normal;
 
     /**
-     *
+     * Bxrdf at surface, null if it is a background node
      */
     BxRDF bxRDF;
 

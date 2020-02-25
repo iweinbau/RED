@@ -9,10 +9,22 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Class representing collection of pixel values.
+ */
 public class FrameBuffer {
 
+    /**
+     * FrameBuffer width.
+     */
     public final int bufferWidth;
+    /**
+     * FrameBuffer height.
+     */
     public final int bufferHeight;
+    /**
+     * FrameBuffer pixel values.
+     */
     private final Pixel[][] pixels;
 
     /**

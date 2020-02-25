@@ -10,21 +10,47 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Class specific for loading .OBJ file format.
+ */
 public class OBJLoader extends MeshLoader {
 
+    /**
+     * Vertices in the obj file.
+     */
     List<Vertex> vertices = new ArrayList<>();
-    List<Normal> normals = new ArrayList<>();
-    List<Point2D> uvs = new ArrayList<>();
-    List<Integer> indices = new ArrayList<Integer>();
 
+    /**
+     * Normals in obj file.
+     */
+    List<Normal> normals = new ArrayList<>();
+
+    /**
+     * UVs in obj file;
+     */
+    List<Point2D> uvs = new ArrayList<>();
+
+    /**
+     * Indices array.
+     */
+    List<Integer> indices = new ArrayList<>();
+
+    /**
+     * Constuct new OBJLoader object with given resource file.
+     * @param fileName
+     */
     public OBJLoader(String fileName) {
         super(fileName);
     }
 
+    /**
+     * Load mesh from file into a Triangle Mesh.
+     * @return TriangleMesh
+     */
     @Override
     TriangleMesh loadMesh() {
             try {
-                loadResource(this.fileName);
+                loadResource();
 
                 String line;
                 while ((line = getNextLine()) != null) {
@@ -98,6 +124,11 @@ public class OBJLoader extends MeshLoader {
         return new TriangleMesh(verticesArray,normalsArray,indicesArray);
     }
 
+    /**
+     * Triangulate faces.
+     * @param face
+     * @return
+     */
     private Collection<String> triangulateFace(String[] face) {
         int numVertices = face.length - 1;
         List<String> vertices = new ArrayList<>();
