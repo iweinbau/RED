@@ -3,10 +3,11 @@ package geometry;
 import core.Constants;
 import core.HitRecord;
 import core.Ray;
+import core.SurfaceSample;
 import material.Material;
 import math.*;
 
-public class Triangle extends Geometry {
+public class Triangle extends Geometry implements Primitive {
 
     /**
      * Triangle points in local space.
@@ -105,5 +106,25 @@ public class Triangle extends Geometry {
                 this,localHit,globalHit,transform.localToGlobal(normal).normalize().toNormal(),t);
 
         return true;
+    }
+
+    @Override
+    public double getArea() {
+        return 0;
+    }
+
+    @Override
+    public SurfaceSample sample(Point2D sample) {
+        return null;
+    }
+
+    @Override
+    public RGBSpectrum Le(Point3D point, Normal normal, Vector3D wi) {
+        return material.Le(point,normal,wi);
+    }
+
+    @Override
+    public double pdf(SurfaceSample sample) {
+        return 0;
     }
 }

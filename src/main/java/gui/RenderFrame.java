@@ -32,6 +32,8 @@ public class RenderFrame extends JFrame implements ProgressListener, RenderEvent
 
 	private final RenderTab renderTab;
 
+	private final SceneTab sceneTab;
+
 	/**
 	 * Creates a user interface which shows the progress of the render which is
 	 * stored in the given frame buffer. The progress will be visualized as an
@@ -68,13 +70,11 @@ public class RenderFrame extends JFrame implements ProgressListener, RenderEvent
 		JTabbedPane tabs = new JTabbedPane();
 
 		renderTab = new RenderTab(renderer,sensitivity,gamma);
-
-		JPanel jPanelSecond = new JPanel();
+		sceneTab = new SceneTab(renderer);
 
 		tabs.addTab("Render Tab", renderTab);
 
-		jPanelSecond.setLayout(null);
-		tabs.addTab("Scene Tab", jPanelSecond);
+		tabs.addTab("Scene Tab", sceneTab);
 
 		// Create the menu bar
 		menu = new Menubar(renderTab);
@@ -190,17 +190,16 @@ public class RenderFrame extends JFrame implements ProgressListener, RenderEvent
 
 		// Determine the size and center
 		pack();
-		center();
 	}
 
 	@Override
 	public void notifyStartRender() {
-
+		renderTab.setRendering(true);
 	}
 
 	@Override
 	public void notifyStopRender() {
-
+		renderTab.setRendering(false);
 	}
 
 	/**

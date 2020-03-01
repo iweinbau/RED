@@ -1,21 +1,33 @@
 package geometry;
 
 import core.*;
+import light.AreaLight;
 import material.Material;
-import math.Normal;
-import math.Point3D;
-import math.Transform;
-import math.Vector3D;
+import math.*;
+import sampler.Sampler;
 
-public class Sphere  extends Geometry{
+public class Sphere extends Geometry implements Primitive{
+
+    private double radius = 1.;
 
     /**
      * Construct new Sphere object
      * @param transform
      * @param material
      */
-    public Sphere(Transform transform, Material material) {
+    public Sphere(Transform transform,Material material) {
         super(transform, material);
+    }
+
+    /**
+     * Construct new Sphere object
+     * @param transform
+     * @param radius
+     * @param material
+     */
+    public Sphere(Transform transform, double radius, Material material) {
+        super(transform, material);
+        this.radius = radius;
     }
 
     /**
@@ -41,7 +53,7 @@ public class Sphere  extends Geometry{
 
         double a = localRay.getDirection().dot(localRay.getDirection());
         double b = 2.0 * (localRay.getDirection().dot(origin));
-        double c = origin.dot(origin) - 1.0;
+        double c = origin.dot(origin) - radius * radius;
 
         double d = b * b - 4.0 * a * c;
 
@@ -70,5 +82,27 @@ public class Sphere  extends Geometry{
         }
         else
             return false;
+    }
+
+    @Override
+    public double getArea() {
+        return 4 * Constants.PI * radius * radius;
+    }
+
+    @Override
+    public SurfaceSample sample(Point2D sample) {
+        Point3D sampledPoint = Sampler.samplePointOnUnitSphere(sample).scale(radius);
+        return new SurfaceSample(transform.localToGlobal(sampledPoint),
+                transform.localToGlobal(sampledPoint.toVector().normalize().toNormal()));
+    }
+
+    @Override
+    public RGBSpectrum Le(Point3D point, Normal normal, Vector3D wi) {
+        return material.Le(point,normal,wi);
+    }
+
+    @Override
+    public double pdf(SurfaceSample sample) {
+        return 4 * Constants.invPI * radius *radius;
     }
 }

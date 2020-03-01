@@ -1,6 +1,7 @@
 package pathnode;
 
 import geometry.Geometry;
+import material.Emission;
 import math.*;
 import scene.Scene;
 
@@ -18,8 +19,8 @@ public class SurfaceNode extends ScatterNode {
     }
 
     @Override
-    public ScatterNode expand(Scene scene) {
-        // TODO: expand node and update throughput: beta *= this.throughput * this.scatter;
+    public ScatterNode expand(Scene scene, Point2D sample) {
+        // TODO: expand node and update of next node, throughput: beta *= this.throughput * this.scatter;
         return null;
     }
 
@@ -29,10 +30,26 @@ public class SurfaceNode extends ScatterNode {
     }
 
     @Override
+    public double pdf(Vector3D wi) {
+        if(bxRDF == null)
+            return 1;
+        return bxRDF.pdf(wo,wi,normal);
+    }
+
+    @Override
     public RGBSpectrum scatter(Vector3D wi) {
+        if(bxRDF == null)
+            return RGBSpectrum.BLACK;
         return bxRDF.f(this.wo,wi,this.normal)
-                .scale(this.normal.maxDot(wi)/this.bxRDF.pdf(this.wo,wi,normal))
+                .scale(this.normal.maxDot(wi))
                 .multiply(throughput);
+    }
+
+    @Override
+    public RGBSpectrum Le() {
+        if (geometry.getMaterial() instanceof Emission)
+            return geometry.getMaterial().Le(position,normal,wo);
+        return RGBSpectrum.BLACK;
     }
 
     @Override

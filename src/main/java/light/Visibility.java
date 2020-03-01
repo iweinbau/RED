@@ -34,7 +34,7 @@ public class Visibility {
     public Visibility(Point3D p0, Point3D p1) {
         this.p0 = p0;
         this.dir = p1.subtract(p0).normalize();
-        this.distance = p1.subtract(p0).length();
+        this.distance = p1.subtract(p0).length() - Constants.kEps;
     }
 
     /**

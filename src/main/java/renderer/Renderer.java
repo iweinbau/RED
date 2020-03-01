@@ -5,6 +5,7 @@ import film.Tile;
 import integrator.Integrator;
 import math.RGBSpectrum;
 import pathnode.EyeNode;
+import sampler.Sampler;
 import scene.Scene;
 
 import java.io.IOException;
@@ -23,10 +24,13 @@ public class Renderer implements RenderEventInterface {
     Camera camera;
 
     boolean shouldStop;
+
     Collection<RenderEventListener> renderEventListeners = new LinkedList<>();
 
-    public Renderer() {
+    int samplesPerPixel;
 
+    public Renderer(int samplesPerPixel) {
+        this.samplesPerPixel = samplesPerPixel;
     }
 
     public void render() {
@@ -37,7 +41,7 @@ public class Renderer implements RenderEventInterface {
         if (this.integrator == null)
             throw new IllegalStateException("No Integrator available!");
 
-        boolean shouldStop = false;
+        shouldStop = false;
 
 
         final ExecutorService service = Executors.newFixedThreadPool(Runtime
@@ -47,23 +51,26 @@ public class Renderer implements RenderEventInterface {
 
             // create a thread which renders the specific tile
             Thread thread = new Thread( () -> {
-                outerloop:
-                for (int height = tile.yStart; height < tile.yEnd; height++) {
-                    for (int width = tile.xStart; width < tile.xEnd; width++) {
+                outerLoop:
+                for (int height = tile.yStart, i = 0; height < tile.yEnd; height++, i++) {
+                    for (int width = tile.xStart,j =0; width < tile.xEnd; width++, j++) {
+                        for (int sample = 0; sample < samplesPerPixel; sample++) {
 
-                        if(shouldStop) {
-                            break outerloop;
+                            if (shouldStop) {
+                                break outerLoop;
+                            }
+
+                            // render pixel height,width
+                            EyeNode eye = new EyeNode(this.camera, width, height);
+
+                            // Once a path has been calculated we have to calculate radiance along it.
+                            // eye radiance is the final value of the pixel.
+                            RGBSpectrum L = integrator.computeRadiance(eye, scene,
+                                    new Sampler());
+
+                            //TODO: test if L is valid!
+                            this.camera.getVp().addColor(height, width, L);
                         }
-                        // render pixel height,width
-                        EyeNode eye = new EyeNode(this.camera, width, height);
-
-                        // Once a path has been calculated we have to calculate radiance along it.
-                        // eye radiance is the final value of the pixel.
-                        RGBSpectrum L = integrator.computeRadiance(eye,scene);
-
-                        //TODO: test if L is valid!
-                        this.camera.getVp().addColor(height, width, L);
-
                     }
                 }
 
@@ -95,22 +102,25 @@ public class Renderer implements RenderEventInterface {
 
     @Override
     public void startRender() {
-        this.camera.clear();
-        for (RenderEventListener listener: renderEventListeners) {
-            listener.notifyBufferChange(camera.getRenderBuffer());
-        }
+        clearBuffers();
         for (RenderEventListener listener: renderEventListeners) {
             listener.notifyStartRender();
         }
+
         this.render();
     }
 
     @Override
-    public void stopRender() {
-        this.shouldStop = true;
+    public void clearBuffers() {
+        this.camera.clear();
         for (RenderEventListener listener: renderEventListeners) {
-            listener.notifyStopRender();
+            listener.notifyBufferChange(camera.getRenderBuffer());
         }
+    }
+
+    @Override
+    public void stopRender() {
+        shouldStop = true;
         try {
             camera.bufferToImage("output.png",1.0,2.2);
             camera.normalBufferToImage("normalBuffer.png");
@@ -118,6 +128,9 @@ public class Renderer implements RenderEventInterface {
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        for (RenderEventListener listener: renderEventListeners) {
+            listener.notifyStopRender();
         }
     }
 

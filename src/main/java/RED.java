@@ -8,7 +8,10 @@ import gui.ProgressReporter;
 import gui.RenderFrame;
 import integrator.DirectLightIntegrator;
 import integrator.Integrator;
+import light.AreaLight;
 import light.PointLight;
+import material.Emission;
+import material.Material;
 import material.Matte;
 import math.Point3D;
 import math.RGBSpectrum;
@@ -44,10 +47,10 @@ public class RED {
 		double gamma = 2.2;
 		boolean gui = true;
 		boolean quiet = false;
-		Point3D origin = new Point3D(0,0,5);
+		Point3D origin = new Point3D(0,5,8);
 		Vector3D lookup = new Vector3D(0,1,0);
 		Point3D destination = new Point3D(0, 0, 0);
-		double fov = 45;
+		double fov = 90;
 		String filename = "output.png";
 
 		/**********************************************************************
@@ -147,7 +150,7 @@ public class RED {
 		 * Initialize the camera and graphical user interface
 		 *********************************************************************/
 
-		final Renderer renderer = new Renderer();
+		final Renderer renderer = new Renderer(100);
 
 		// initialize the progress reporter
 		final ProgressReporter reporter = new ProgressReporter("Rendering", 40,
@@ -178,7 +181,7 @@ public class RED {
 
 		renderer.setScene(scene);
 		renderer.setCamera(camera);
-		renderer.setIntegrator(new DirectLightIntegrator(new Sampler()));
+		renderer.setIntegrator(new DirectLightIntegrator());
 
 		Random rand = new Random();
 		Transform objT = new Transform();
@@ -192,43 +195,49 @@ public class RED {
 //		scene.addGeometry(s);
 
 //		// SPHERE DEMO
-//		objT = new Transform();
-//		objT.rotateX(90);
-//		objT.translate(new Point3D(0,0,-2));
-//		Plane p1 = new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1)));
-//		scene.addGeometry(p1);
-//		objT = new Transform();
-//		objT.translate(new Point3D(0,-1,0));
-//		Plane p2 = new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1)));
-//		scene.addGeometry(p2);
-//		objT = new Transform();
-//		Sphere s = new Sphere(objT,new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1)));
-//		scene.addGeometry(s);
+		objT = new Transform();
+		objT.rotateX(90);
+		objT.translate(new Point3D(0,0,-2));
+		Plane p1 = new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1)));
+		scene.addGeometry(p1);
+		objT = new Transform();
+		objT.translate(new Point3D(0,-1,0));
+		Plane p2 = new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1)));
+		scene.addGeometry(p2);
+		objT = new Transform();
+		Sphere s = new Sphere(objT,new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1)));
+		scene.addGeometry(s);
 
 
 		// TRIANGLE SPHERE DEMO SMOOTH
 //		MeshFactory factory = new MeshFactory();
-////		TriangleMesh mesh = factory.getTriangleMesh("smoothSphere.obj");
-////		Composite comp = new Composite(objT,mesh,
-////				new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1)));
-////
-////		scene.addGeometry(comp);
+//		TriangleMesh mesh = factory.getTriangleMesh("smoothSphere.obj");
+//		Composite comp = new Composite(objT,mesh,
+//				new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1)));
+//
+//		scene.addGeometry(comp);
 
 		// TRIANGLE SPHERE DEMO FLAT
-		MeshFactory factory = new MeshFactory();
-		TriangleMesh mesh = factory.getTriangleMesh("flatSphere.obj");
-		Composite comp = new Composite(objT,mesh,
-				new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1)));
-		scene.addGeometry(comp);
+//		MeshFactory factory = new MeshFactory();
+//		TriangleMesh mesh = factory.getTriangleMesh("flatSphere.obj");
+//		Composite comp = new Composite(objT,mesh,
+//				new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1)));
+//		scene.addGeometry(comp);
 
 		Transform lightT;
 		lightT = new Transform();
-		lightT.translate(new Point3D(2,3,3));
-		scene.addLight(new PointLight(new RGBSpectrum(1),lightT));
+		lightT.translate(new Point3D(2,5,0));
+		Emission emit = new Emission(new RGBSpectrum(2));
+		Sphere lObj = new Sphere(lightT,1,emit);
+
+		//scene.addGeometry(lObj);
+		scene.addLight(new AreaLight(lObj, emit));
 
 		lightT = new Transform();
-		lightT.translate(new Point3D(-2,0,3));
-		//scene.addLight(new PointLight(new RGBSpectrum(1,1,0),lightT));
+		lightT.translate(new Point3D(-2,1,3));
+		emit = new Emission(new RGBSpectrum(20,20,0));
+		lObj = new Sphere(lightT,.3,emit);
+		scene.addLight(new AreaLight(lObj,emit));
 
 	}
 }

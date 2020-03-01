@@ -50,9 +50,11 @@ public class Scene {
 
     public boolean shadowTraceRay(Ray ray) {
         for (Geometry object: objects) {
-            HitRecord tmpRecord = new HitRecord();
-            if(object.intersect(ray,tmpRecord) && tmpRecord.getDistance() < ray.getMaxDistance() ){
-                return false;
+            if(object.getMaterial().isShadowCaster()){
+                HitRecord tmpRecord = new HitRecord();
+                if(object.intersect(ray,tmpRecord) && tmpRecord.getDistance() < ray.getMaxDistance() ) {
+                    return false;
+                }
             }
         }
         return true;

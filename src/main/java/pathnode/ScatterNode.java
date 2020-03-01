@@ -3,6 +3,7 @@ package pathnode;
 import bxrdf.BxRDF;
 import math.Normal;
 import math.Point3D;
+import math.RGBSpectrum;
 import math.Vector3D;
 
 /**
@@ -26,6 +27,10 @@ public abstract class ScatterNode extends PathNode {
         super(position,wo,parent);
         this.normal = normal;
     }
+
+    public abstract RGBSpectrum Le();
+
+    public abstract double pdf(Vector3D wi);
 
     public abstract boolean isSurfaceNode();
 

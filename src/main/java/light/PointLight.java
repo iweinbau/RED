@@ -1,10 +1,7 @@
 package light;
 
 import core.Constants;
-import math.Point3D;
-import math.RGBSpectrum;
-import math.Transform;
-import math.Vector3D;
+import math.*;
 import pathnode.ScatterNode;
 import textures.Constant;
 
@@ -16,7 +13,7 @@ public class PointLight extends Light{
     Point3D lightPosition;
 
     /**
-     * Construct new PointLight with given irradiance.
+     * Construct new PointLight with given power.
      * @param I
      * @param transform
      */
@@ -33,8 +30,13 @@ public class PointLight extends Light{
      * @return
      */
     @Override
-    public RGBSpectrum Li() {
-        return I.scale(4 * Constants.invPI);
+    public RGBSpectrum Li(Vector3D wi) {
+        return I;
+    }
+
+    @Override
+    public RGBSpectrum power() {
+        return I.scale(4 * Constants.PI);
     }
 
     /**
@@ -44,7 +46,7 @@ public class PointLight extends Light{
      */
     @Override
     public RGBSpectrum scatter(Vector3D wi) {
-        return Li().scale(1/this.Li_pdf());
+        return Li(wi);
     }
 
     /**
@@ -53,8 +55,8 @@ public class PointLight extends Light{
      * @return double
      */
     @Override
-    public double distanceTo(Point3D p) {
-        return p.subtract(lightPosition).length();
+    public double distanceFactor(Point3D p) {
+        return p.subtract(lightPosition).dot(p.subtract(lightPosition));
     }
 
     /**
@@ -74,7 +76,7 @@ public class PointLight extends Light{
      * @return Vector3D
      */
     @Override
-    public Vector3D sample_wi(ScatterNode scatterNode) {
+    public Vector3D sample_wi(ScatterNode scatterNode, Point2D sample) {
         return lightPosition.subtract(scatterNode.getPosition()).normalize();
     }
 

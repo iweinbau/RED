@@ -1,6 +1,7 @@
 package pathnode;
 
 import core.Ray;
+import math.Point2D;
 import math.Point3D;
 import math.RGBSpectrum;
 import math.Vector3D;
@@ -67,7 +68,7 @@ public abstract class PathNode{
      * Expand path with a new node.
      *
      */
-    public abstract ScatterNode expand(Scene scene);
+    public abstract ScatterNode expand(Scene scene, Point2D sample);
 
     public abstract ScatterNode trace(Scene scene,Vector3D direction);
 

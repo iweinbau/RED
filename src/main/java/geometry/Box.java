@@ -3,15 +3,14 @@ package geometry;
 import core.Constants;
 import core.HitRecord;
 import core.Ray;
+import core.SurfaceSample;
 import material.Material;
-import math.Normal;
-import math.Point3D;
-import math.Transform;
+import math.*;
 
 /**
  * Class representing Axis aligned box
  */
-public class Box extends Geometry{
+public class Box extends Geometry implements Primitive{
 
     /**
      * Box minimum point
@@ -129,4 +128,25 @@ public class Box extends Geometry{
             return false;
         }
     }
+
+    @Override
+    public double getArea() {
+        return 0;
+    }
+
+    @Override
+    public double pdf(SurfaceSample sample) {
+        return 0;
+    }
+
+    @Override
+    public SurfaceSample sample(Point2D sample) {
+        return null;
+    }
+
+    @Override
+    public RGBSpectrum Le(Point3D point, Normal normal, Vector3D wi) {
+        return material.Le(point,normal,wi);
+    }
+
 }

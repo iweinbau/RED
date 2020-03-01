@@ -1,10 +1,7 @@
 package light;
 
 import core.Ray;
-import math.Point3D;
-import math.RGBSpectrum;
-import math.Transform;
-import math.Vector3D;
+import math.*;
 import pathnode.ScatterNode;
 
 public abstract class Light {
@@ -36,7 +33,7 @@ public abstract class Light {
      * @param scatterNode reference node in path.
      * @return Vector3D
      */
-    public abstract Vector3D sample_wi(ScatterNode scatterNode);
+    public abstract Vector3D sample_wi(ScatterNode scatterNode, Point2D sample);
 
     /**
      * Get probability of sampling a certain direction on the light source.
@@ -59,7 +56,9 @@ public abstract class Light {
      * Radiance along direction.
      * @return RGBSpectrum
      */
-    public abstract RGBSpectrum Li();
+    public abstract RGBSpectrum Li(Vector3D wi);
+
+    public abstract RGBSpectrum power();
 
     /**
      * Scatter light in a given direction
@@ -73,7 +72,7 @@ public abstract class Light {
      * @param p
      * @return
      */
-    public abstract double distanceTo(Point3D p);
+    public abstract double distanceFactor(Point3D p);
 
     /**
      * Get visibility function for this light for a given surface point.

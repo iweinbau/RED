@@ -217,8 +217,8 @@ public class ProgressReporter implements RenderEventListener {
 
 	@Override
 	public void notifyBufferChange(FrameBuffer buffer) {
-		totalWork = buffer.getBufferHeight() * buffer.getBufferWidth();
 		done = 0;
+		totalWork = buffer.getBufferHeight() * buffer.getBufferWidth();
 	}
 
 	@Override

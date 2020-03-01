@@ -14,10 +14,9 @@ public class DirectLightIntegrator extends Integrator {
 
     /**
      * Construct new DirectLightIntegrator
-     * @param sampler a sampler class to get samples from
      */
-    public DirectLightIntegrator(Sampler sampler) {
-        super(sampler);
+    public DirectLightIntegrator() {
+
     }
 
     /**
@@ -29,13 +28,14 @@ public class DirectLightIntegrator extends Integrator {
      * @return RGBSpectrum computed radiance.
      */
     @Override
-    public RGBSpectrum computeRadiance(EyeNode eyeNode, Scene scene) {
+    public RGBSpectrum computeRadiance(EyeNode eyeNode, Scene scene, Sampler sampler) {
         RGBSpectrum L = RGBSpectrum.BLACK;
-        ScatterNode scatterNode = eyeNode.expand(scene);
+        ScatterNode scatterNode = eyeNode.expand(scene,sampler.sample2D());
 
-        //TODO: add own light contribution eg. the source term
+        L = L.add(scatterNode.Le());
+
         if(scatterNode.isSurfaceNode()) {
-            L = L.add(directLights(scatterNode,scene));
+            L = L.add(directLights(scatterNode,scene,sampler));
         }
         return L;
     }

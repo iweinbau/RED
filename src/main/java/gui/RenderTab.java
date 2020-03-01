@@ -28,6 +28,8 @@ public class RenderTab extends JPanel {
      */
     private final ControlPanel control;
 
+    private boolean isRendering;
+
     /**
      * Panel which shows a preview of the render.
      */
@@ -130,6 +132,22 @@ public class RenderTab extends JPanel {
     }
 
     public void startRender() {
+        isRendering = true;
         this.renderer.startRender();
+    }
+
+    public void stopRender() {
+        isRendering = false;
+        this.renderer.stopRender();
+    }
+
+    public void clearBuffers() {
+        if (this.isRendering)
+            return;
+        this.renderer.clearBuffers();
+    }
+
+    public void setRendering(boolean isRendering) {
+        this.isRendering = isRendering;
     }
 }

@@ -3,6 +3,7 @@ package pathnode;
 import camera.Camera;
 import core.Ray;
 import core.Sample;
+import math.Point2D;
 import math.RGBSpectrum;
 import math.Vector3D;
 import scene.Scene;
@@ -28,13 +29,13 @@ public class EyeNode extends PathNode {
         this.height = height;
     }
 
-    public Sample sample() {
-        return new Sample(width +0.5, height +0.5);
+    public Sample sample(Point2D sample) {
+        return new Sample(width + sample.getX(), height + sample.getY());
     }
 
     @Override
-    public ScatterNode expand(Scene scene) {
-        this.successor = trace(scene,camera.viewDirection(sample()));
+    public ScatterNode expand(Scene scene, Point2D sample) {
+        this.successor = trace(scene,camera.viewDirection(sample(sample)));
         this.successor.throughput = new RGBSpectrum(1);
         return this.successor;
     }

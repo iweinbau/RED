@@ -121,6 +121,46 @@ public class ControlPanel extends JPanel {
 			}
 		});
 
+		// Add stop render button
+		c.weighty = 0;
+		c.gridy++;
+
+		JButton stopRender = new JButton("Stop render");
+		add(stopRender, c);
+		stopRender.addActionListener(new ActionListener() {
+			/*
+			 * (non-Javadoc)
+			 *
+			 * @see
+			 * java.awt.event.ActionListener#actionPerformed(java.awt.event.
+			 * ActionEvent)
+			 */
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				frame.stopRender();
+			}
+		});
+
+		// Add clear render button
+		c.weighty = 0;
+		c.gridy++;
+
+		JButton clearBuffer = new JButton("Clear buffer");
+		add(clearBuffer, c);
+		clearBuffer.addActionListener(new ActionListener() {
+			/*
+			 * (non-Javadoc)
+			 *
+			 * @see
+			 * java.awt.event.ActionListener#actionPerformed(java.awt.event.
+			 * ActionEvent)
+			 */
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				frame.clearBuffers();
+			}
+		});
+
 		// Add save image button
 		c.weighty = 0;
 		c.gridy++;
