@@ -8,7 +8,7 @@ import math.Point3D;
 import math.Transform;
 import math.Vector3D;
 
-public abstract class Geometry implements ITransform {
+public abstract class Geometry implements ITransform{
 
     /**
      * Transformation of this geometry.
@@ -55,6 +55,12 @@ public abstract class Geometry implements ITransform {
      */
     public abstract boolean intersect(Ray ray,HitRecord hitRecord);
 
+    /**
+     * Returns the bounding box of this geometric object.
+     * @return BBox
+     */
+    public abstract BBox boundingBox();
+
 
     @Override
     public void translate(Point3D p) {
@@ -89,5 +95,15 @@ public abstract class Geometry implements ITransform {
     @Override
     public void rotate(Vector3D angle) {
         transform.rotate(angle);
+    }
+
+    @Override
+    public void align(Vector3D v1, Vector3D v2) {
+        transform.align(v1,v2);
+    }
+
+    @Override
+    public void rotateTo(Vector3D v) {
+        transform.rotateTo(v);
     }
 }

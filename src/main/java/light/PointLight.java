@@ -19,7 +19,6 @@ public class PointLight extends Light{
      */
     public PointLight(RGBSpectrum I,Transform transform) {
         super(I,transform);
-        this.I = I;
         lightPosition = transform.localToGlobal(new Point3D(0));
     }
 

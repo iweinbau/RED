@@ -126,23 +126,48 @@ public class Transform implements ITransform {
         this.rotateX(angle.x);
     }
 
-    public Point3D localToGlobal(Point3D p){
+    @Override
+    public void align(Vector3D v1, Vector3D v2) {
+        double dot = v1.normalize().dot(v2.normalize());
+        double crossNorm = v1.normalize().cross(v2.normalize()).length();
+        Matrix4 transformation = new Matrix4(
+                dot,	crossNorm,	0, 0,
+                -crossNorm,	dot,	0,	0,
+                0,	0,	1,	0,
+                0,	0,	0,	1);
 
+        Matrix4 inverse = transformation.transpose();
+
+        T = transformation.multiply(T);
+        inverseT = inverseT.multiply(inverse);
+    }
+
+    @Override
+    public void rotateTo(Vector3D v) {
+        this.align(new Vector3D(0,1,0),v);
+    }
+
+    public Point3D localToGlobal(Point3D p){
         return T.multiply(p);
     }
 
     public Point3D globalToLocal(Point3D p) {
-
         return inverseT.multiply(p);
     }
 
-    public Normal localToGlobal(Normal n){
+    public Vector3D localToGlobal(Vector3D v){
+        return T.multiply(v);
+    }
 
+    public Vector3D globalToLocal(Vector3D v) {
+        return inverseT.multiply(v);
+    }
+
+    public Normal localToGlobal(Normal n){
         return inverseT.transpose().multiply(n);
     }
 
     public Normal globalToLocal(Normal n) {
-
         return T.transpose().multiply(n);
     }
 

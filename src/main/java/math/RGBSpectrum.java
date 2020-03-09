@@ -119,4 +119,22 @@ public class RGBSpectrum extends Triple<java.lang.Double> {
 
         return (255 << 24) + (r << 16) + (g << 8) + b;
     }
+
+    public static RGBSpectrum intToHeatMap(double value,int maxValue) {
+        double a= (1. - (value/ (double)maxValue))/0.25;	//invert and group
+        int X= (int) (a);	//this is the integer part
+        double Y= a-X; //fractional part from 0 to 255
+        double r,g,b;
+        switch(X)
+        {
+            case 0: r=1;g=Y;b=0;break;
+            case 1: r=1-Y;g=1;b=0;break;
+            case 2: r=0;g=1;b=Y;break;
+            case 3: r=0;g=1-Y;b=1;break;
+            case 4: r=0;g=0;b=1;break;
+            default: r=1;g=0;b=0;
+        }
+
+        return new RGBSpectrum(r,g,b);
+    }
 }

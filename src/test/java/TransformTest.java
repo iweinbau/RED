@@ -91,5 +91,13 @@ public class TransformTest {
 
     }
 
+    @Test
+    public void RotateTo() {
+        Transform transform = new Transform();
+        transform.rotateTo(new Vector3D(2,2,3));
+        Vector3D res = transform.localToGlobal(new Vector3D(0,1,0));
+        Vector3D res2 = new Vector3D(2,2,3).normalize();
+    }
+
 
 }

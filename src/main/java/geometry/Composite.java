@@ -2,8 +2,9 @@ package geometry;
 
 import core.HitRecord;
 import core.Ray;
+import core.SurfaceSample;
 import material.Material;
-import math.Transform;
+import math.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ import java.util.List;
 public class Composite extends Geometry {
 
     /**
-     * All chile objects.
+     * All children
      */
     List<Geometry> composites = new ArrayList<>();
 
@@ -36,7 +37,7 @@ public class Composite extends Geometry {
         super(transform, material);
         int [] indices = mesh.getIndices();
         for (int i = 0; i < indices.length; i+=3) {
-            addGeometry(new Triangle(indices[i], indices[i+1], indices[i+2], mesh, new Transform(), material));
+            addGeometry( new Triangle(indices[i], indices[i+1], indices[i+2], mesh, transform, material));
         }
     }
 
@@ -55,7 +56,19 @@ public class Composite extends Geometry {
                 hitRecord.setIntersection(tmpRecord);
                 hit = true;
             }
+            hitRecord.intersectionTests += tmpRecord.intersectionTests;
         }
         return hit;
+    }
+
+    @Override
+    public BBox boundingBox() {
+        if (composites.size() <=0 )
+            throw new IllegalStateException("Cannot create bounding box for empty composite ");
+        BBox boundingBox = composites.get(0).boundingBox();
+        for (int i = 1; i<composites.size(); i++) {
+            boundingBox = boundingBox.union(composites.get(i).boundingBox());
+        }
+        return boundingBox;
     }
 }

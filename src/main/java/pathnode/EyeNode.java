@@ -1,6 +1,7 @@
 package pathnode;
 
 import camera.Camera;
+import core.HitRecord;
 import core.Ray;
 import core.Sample;
 import math.Point2D;
@@ -43,8 +44,10 @@ public class EyeNode extends PathNode {
     @Override
     public ScatterNode trace(Scene scene, Vector3D direction) {
         Ray ray = new Ray(camera.getPosition(),direction);
-        ScatterNode scatterNode = scene.traceRay(ray).toScatterNode(this);
+        HitRecord hitRecord = scene.traceRay(ray);
+        ScatterNode scatterNode = hitRecord.toScatterNode(this);
         camera.getVp().addNormal(height, width,scatterNode.normal);
+        camera.getVp().addIntersection(height,width,hitRecord.intersectionTests);
         camera.getVp().addDepth(height, width,this.distanceTo(scatterNode));
         return scatterNode;
     }

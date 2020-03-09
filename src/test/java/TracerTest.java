@@ -1,15 +1,13 @@
 import camera.PerspectiveCamera;
+import geometry.BVH;
 import geometry.Box;
-import geometry.Plane;
+import geometry.Composite;
 import geometry.Sphere;
-import geometry.Triangle;
 import gui.ProgressReporter;
 import integrator.DirectLightIntegrator;
 import integrator.Integrator;
-import light.DirectionalLight;
 import light.PointLight;
 import material.Matte;
-import material.Phong;
 import math.Point3D;
 import math.RGBSpectrum;
 import math.Transform;
@@ -58,8 +56,8 @@ public class TracerTest {
 
         Random rand = new Random();
 
-        Integrator integrator = new DirectLightIntegrator(new Sampler());
-        Renderer renderer = new Renderer();
+        Integrator integrator = new DirectLightIntegrator();
+        Renderer renderer = new Renderer(1);
 
         renderer.setIntegrator(integrator);
         renderer.setCamera(camera);
@@ -126,8 +124,8 @@ public class TracerTest {
 
         Random rand = new Random();
 
-        Integrator integrator = new DirectLightIntegrator(new Sampler());
-        Renderer renderer = new Renderer();
+        Integrator integrator = new DirectLightIntegrator();
+        Renderer renderer = new Renderer(1);
 
         renderer.setIntegrator(integrator);
         renderer.setCamera(camera);
@@ -136,7 +134,7 @@ public class TracerTest {
         renderer.addRenderEventListener(reporter);
 
         int prevInt = 0;
-        for (int i = 0; i <= MAX_OBJECTS; i+=50) {
+        for (int i = MAX_OBJECTS; i <= MAX_OBJECTS; i+=50) {
             writer.write(String.format("%d ",i));
             System.out.println(String.format("%d ",i));
             for (int j = 0; j < i-prevInt; j++) {
@@ -193,8 +191,8 @@ public class TracerTest {
 
         Random rand = new Random();
 
-        Integrator integrator = new DirectLightIntegrator(new Sampler());
-        Renderer renderer = new Renderer();
+        Integrator integrator = new DirectLightIntegrator();
+        Renderer renderer = new Renderer(1);
 
         renderer.setIntegrator(integrator);
         renderer.setCamera(camera);
@@ -244,4 +242,47 @@ public class TracerTest {
 
         writer.close();
     }
+
+
+    @Test
+    public void BVHTest(){
+
+        // initialize the progress reporter
+        final ProgressReporter reporter = new ProgressReporter("Rendering", 40,
+                width * height,true);
+
+        PerspectiveCamera camera = new PerspectiveCamera(
+                new Point3D(0,3,2),
+                new Point3D(0f),width,height,90);
+
+        Scene scene = new Scene();
+
+        Composite bvh = new Composite(new Transform());
+        Transform objT = new Transform();
+        objT.translate(new Point3D(1,0,0));
+        Sphere s = new Sphere(objT,new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1)));
+        bvh.addGeometry(s);
+        objT = new Transform();
+        objT.translate(new Point3D(-1,0,0));
+        s = new Sphere(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1)));
+        bvh.addGeometry(s);
+        objT = new Transform();
+        objT.translate(new Point3D(2.5,0,0));
+        s = new Sphere(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1)));
+        bvh.addGeometry(s);
+
+
+        Integrator integrator = new DirectLightIntegrator();
+        Renderer renderer = new Renderer(1);
+
+        renderer.setIntegrator(integrator);
+        renderer.setCamera(camera);
+        renderer.setScene(scene);
+
+        renderer.addRenderEventListener(reporter);
+
+        renderer.startRender();
+
+    }
+
 }

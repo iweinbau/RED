@@ -10,16 +10,16 @@ import math.*;
 /**
  * Class representing Axis aligned box
  */
-public class Box extends Geometry implements Primitive{
+public class Box extends Geometry{
 
     /**
      * Box minimum point
      */
-    final Point3D p1 = new Point3D(-1, -1, -1);
+    private final Point3D p1 = new Point3D(-1, -1, -1);
     /**
      * Box maximum point
      */
-    final Point3D p2 = new Point3D(1, 1, 1);
+    private final Point3D p2 = new Point3D(1, 1, 1);
 
     /**
      * Construct new Box with a given transformation and material.
@@ -38,6 +38,11 @@ public class Box extends Geometry implements Primitive{
         super(transform);
     }
 
+    @Override
+    public BBox boundingBox() {
+        return new BBox(transform.localToGlobal(p1),transform.localToGlobal(p2));
+    }
+
     /**
      *
      * Ray box intersection.
@@ -47,6 +52,7 @@ public class Box extends Geometry implements Primitive{
      */
     @Override
     public boolean intersect(Ray ray, HitRecord hitRecord) {
+        //hitRecord.intersectionTests += 1;
         Ray localRay = transform.globalToLocal(ray);
 
         double ox = localRay.getOrigin().getX();
@@ -127,26 +133,6 @@ public class Box extends Geometry implements Primitive{
         }else {
             return false;
         }
-    }
-
-    @Override
-    public double getArea() {
-        return 0;
-    }
-
-    @Override
-    public double pdf(SurfaceSample sample) {
-        return 0;
-    }
-
-    @Override
-    public SurfaceSample sample(Point2D sample) {
-        return null;
-    }
-
-    @Override
-    public RGBSpectrum Le(Point3D point, Normal normal, Vector3D wi) {
-        return material.Le(point,normal,wi);
     }
 
 }

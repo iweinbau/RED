@@ -46,8 +46,9 @@ public class Sphere extends Geometry implements Primitive{
      */
     @Override
     public boolean intersect(Ray ray,HitRecord hitRecord) {
-        Ray localRay = transform.globalToLocal(ray);
+        hitRecord.intersectionTests += 1;
 
+        Ray localRay = transform.globalToLocal(ray);
 
         Vector3D origin = localRay.getOrigin().toVector();
 
@@ -85,6 +86,12 @@ public class Sphere extends Geometry implements Primitive{
     }
 
     @Override
+    public BBox boundingBox() {
+        return new BBox(transform.localToGlobal(new Point3D(-radius,-radius,-radius)),
+                transform.localToGlobal(new Point3D(radius,radius,radius)));
+    }
+
+    @Override
     public double getArea() {
         return 4 * Constants.PI * radius * radius;
     }
@@ -103,6 +110,6 @@ public class Sphere extends Geometry implements Primitive{
 
     @Override
     public double pdf(SurfaceSample sample) {
-        return 4 * Constants.invPI * radius *radius;
+        return 4 * Constants.invPI * radius * radius;
     }
 }

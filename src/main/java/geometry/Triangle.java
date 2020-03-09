@@ -1,11 +1,10 @@
 package geometry;
 
-import core.Constants;
-import core.HitRecord;
-import core.Ray;
-import core.SurfaceSample;
+import core.*;
 import material.Material;
 import math.*;
+import sampler.Sampler;
+import textures.Constant;
 
 public class Triangle extends Geometry implements Primitive {
 
@@ -68,6 +67,7 @@ public class Triangle extends Geometry implements Primitive {
      */
     @Override
     public boolean intersect(Ray ray, HitRecord hitRecord) {
+        hitRecord.intersectionTests += 1;
 
         Ray localRay = transform.globalToLocal(ray);
 
@@ -92,15 +92,16 @@ public class Triangle extends Geometry implements Primitive {
         if(t < Constants.kEps)
             return false;
 
-        // we intersect this triangle
-        Point3D localHit = p0.add(p1.subtract(p0).scale(beta)).add(p2.subtract(p0).scale(gamma));
-        Point3D globalHit = transform.localToGlobal(localHit);
-
         Normal normal;
         if(mesh != null)
             normal = n0.scale(1 - gamma - beta).add(n1.scale(beta)).add(n2.scale(gamma)).normalize().toNormal();
         else
             normal = n0;
+
+        // we intersect this triangle
+        Point3D localHit = p0.add(p1.subtract(p0).scale(beta)).add(p2.subtract(p0).scale(gamma))
+                .add(normal.scale(Constants.kEps));
+        Point3D globalHit = transform.localToGlobal(localHit).add(normal.scale(Constants.kEps));
 
         hitRecord.setIntersection(ray.getDirection().neg(),
                 this,localHit,globalHit,transform.localToGlobal(normal).normalize().toNormal(),t);
@@ -109,13 +110,30 @@ public class Triangle extends Geometry implements Primitive {
     }
 
     @Override
+    public BBox boundingBox() {
+        return new BBox(transform.localToGlobal(p0),transform.localToGlobal(p1))
+                .union(transform.localToGlobal(p2));
+    }
+
+    @Override
     public double getArea() {
-        return 0;
+        return transform.localToGlobal(p1).subtract(transform.localToGlobal(p0))
+                .dot(transform.localToGlobal(p2).subtract(transform.localToGlobal(p0)))/2.;
     }
 
     @Override
     public SurfaceSample sample(Point2D sample) {
-        return null;
+        Point2D b = Sampler.uniformSampleTriangle(sample);
+        Point3D sampledPoint = p0.scale(1-b.getX()-b.getY()).add(p1.scale(b.getX())).add(p2.scale(b.getY()));
+        Normal normal;
+        if(mesh != null)
+            normal = n0.scale(1-b.getX()-b.getY())
+                    .add(n1.scale(b.getX()))
+                    .add(n2.scale(b.getY())).normalize().toNormal();
+        else
+            normal = n0;
+        return new SurfaceSample(transform.localToGlobal(sampledPoint),
+                transform.localToGlobal(normal).normalize().toNormal());
     }
 
     @Override
@@ -125,6 +143,6 @@ public class Triangle extends Geometry implements Primitive {
 
     @Override
     public double pdf(SurfaceSample sample) {
-        return 0;
+        return 1./this.getArea();
     }
 }

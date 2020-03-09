@@ -105,6 +105,10 @@ public abstract class Camera {
         this.vp.normalBufferToImage(fileName);
     }
 
+    public void intersectionBufferToImage(String fileName) throws IOException {
+        this.vp.intersectionBufferToImage(fileName);
+    }
+
     /**
      *
      * Get the render buffer of the ViewPlane.
@@ -139,4 +143,5 @@ public abstract class Camera {
     public void clear() {
         this.vp.clear();
     }
+
 }

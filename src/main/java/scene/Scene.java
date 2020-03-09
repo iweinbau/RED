@@ -20,11 +20,9 @@ public class Scene {
     }
 
     public void addGeometry(Geometry... objects) {
-
         Collections.addAll(this.objects, objects);
     }
     public void addLight(Light... lights) {
-
         Collections.addAll(this.lights,lights);
     }
 
@@ -42,17 +40,18 @@ public class Scene {
             HitRecord tmpRecord = new HitRecord();
             if(object.intersect(ray,tmpRecord) &&  tmpRecord.getDistance() < ray.getMaxDistance() ){
                 ray.setMaxDistance(tmpRecord.getDistance());
-                hitRecord = tmpRecord;
+                hitRecord.setIntersection(tmpRecord);
             }
+            hitRecord.intersectionTests += tmpRecord.intersectionTests;
         }
         return hitRecord;
     }
 
     public boolean shadowTraceRay(Ray ray) {
         for (Geometry object: objects) {
-            if(object.getMaterial().isShadowCaster()){
-                HitRecord tmpRecord = new HitRecord();
-                if(object.intersect(ray,tmpRecord) && tmpRecord.getDistance() < ray.getMaxDistance() ) {
+            HitRecord tmpRecord = new HitRecord();
+            if(object.intersect(ray,tmpRecord) && tmpRecord.getDistance() < ray.getMaxDistance() ) {
+                if(tmpRecord.getGeometry().getMaterial().isShadowCaster()){
                     return false;
                 }
             }

@@ -49,8 +49,13 @@ public class Pixel {
      *
      * @param weight new Pixel weight.
      */
-    public void setWeight(double weight) {
-        this.pixelWeight = weight;
+    public void addWeight(double weight) {
+        this.pixelWeight += weight;
+    }
+
+    public void setRgbColor(RGBSpectrum color) {
+        this.rgbColor = color;
+        this.pixelWeight = 1;
     }
 
     /**

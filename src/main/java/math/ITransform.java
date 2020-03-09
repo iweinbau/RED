@@ -42,4 +42,17 @@ public interface ITransform {
      * @param angle
      */
     void rotate(Vector3D angle);
+
+    /**
+     *
+     * @param v1
+     * @param v2
+     */
+    void align(Vector3D v1, Vector3D v2);
+
+    /**
+     * rotate up vector to v
+     * @param v
+     */
+    void rotateTo(Vector3D v);
 }

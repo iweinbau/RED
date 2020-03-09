@@ -3,10 +3,10 @@ package geometry;
 import core.Constants;
 import core.HitRecord;
 import core.Ray;
+import core.SurfaceSample;
 import material.Material;
-import math.Normal;
-import math.Point3D;
-import math.Transform;
+import math.*;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class Plane extends Geometry {
 
@@ -47,8 +47,10 @@ public class Plane extends Geometry {
      */
     @Override
     public boolean intersect(Ray ray, HitRecord hitRecord) {
+        hitRecord.intersectionTests += 1;
+
         Ray localRay = transform.globalToLocal(ray);
-        double t = planePoint.subtract(ray.getOrigin()).dot(planeNormal) / ray.getDirection().dot(planeNormal);
+        double t = (planePoint.subtract(ray.getOrigin())).dot(planeNormal) / ray.getDirection().dot(planeNormal);
         if(t > Constants.kEps) {
             Point3D localPoint = localRay.getPointAlongRay(t);
             Point3D globalHitPoint = ray.getPointAlongRay(t);
@@ -56,5 +58,10 @@ public class Plane extends Geometry {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public BBox boundingBox() {
+        return null;
     }
 }

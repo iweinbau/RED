@@ -47,7 +47,7 @@ public abstract class Integrator {
                 L = L.add(
                         scatterNode.scatter(wi)
                         .multiply(light.scatter(wi.neg()))
-                        .scale(1/scatterNode.pdf(wi) * light.Li_pdf()));
+                        .scale(1./(scatterNode.pdf(wi) * light.Li_pdf())));
             }
         }
         return L;

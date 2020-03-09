@@ -144,4 +144,8 @@ public class Vector3D extends Triple<java.lang.Double>{
                 Math.abs(getY() - p.getY()) < Constants.kEps &&
                 Math.abs(getZ() - p.getZ()) < Constants.kEps;
     }
+
+    public Vector3D inverse() {
+        return new Vector3D(1/x,1/y,1/z);
+    }
 }

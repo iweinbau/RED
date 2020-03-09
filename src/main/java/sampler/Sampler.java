@@ -36,4 +36,16 @@ public class Sampler {
 
         return new Point3D( x, y, z);
     }
+
+    public static Point2D samplePointOnUnitDisk(Point2D sample) {
+        double theta = 2 * Constants.PI * sample.getX();
+        double radius = sample.getY();
+
+        return new Point2D(Math.sin(theta) * radius,Math.cos(theta) * radius);
+    }
+
+    public static Point2D uniformSampleTriangle(Point2D sample) {
+        double s = Math.sqrt(sample.getX());
+        return new Point2D(1 - s, s * sample.getY());
+    }
 }

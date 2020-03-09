@@ -5,7 +5,6 @@ import math.Normal;
 import math.RGBSpectrum;
 import math.Vector3D;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -47,6 +46,8 @@ public class ViewPlane {
      */
     double maxDepth;
 
+    int maxIntersections;
+
     /**
      *
      * Main buffer for the final render.
@@ -62,6 +63,11 @@ public class ViewPlane {
      * Depth buffer.
      */
     FrameBuffer depthBuffer;
+
+    /**
+     * Buffer for number of intersections.
+     */
+    FrameBuffer intersectionBuffer;
 
     /**
      * Constructor
@@ -85,6 +91,7 @@ public class ViewPlane {
         this.buffer = new FrameBuffer(horizontalRes,verticalRes);
         this.depthBuffer = new FrameBuffer(horizontalRes,verticalRes);
         this.normalBuffer = new FrameBuffer(horizontalRes,verticalRes);
+        this.intersectionBuffer = new FrameBuffer(horizontalRes,verticalRes);
 
     }
 
@@ -120,6 +127,12 @@ public class ViewPlane {
             normalBuffer.addPixel(height, width, RGBSpectrum.BLACK);
         else
             normalBuffer.addPixel(height, width, new RGBSpectrum(normal.scale(1./2.).add(new Vector3D(1./2.))));
+    }
+
+    public void addIntersection(int height, int width, int intersections) {
+        if( maxIntersections < intersections)
+            maxIntersections = intersections;
+        this.intersectionBuffer.addPixel(height,width,new RGBSpectrum(intersections));
     }
 
     /**
@@ -185,7 +198,7 @@ public class ViewPlane {
      * @throws IOException when error occurred during execution.
      */
     public void depthBufferToImage(String fileName) throws IOException {
-        this.depthBuffer.setBufferWeight(maxDepth);
+        this.depthBuffer.addBufferWeight(maxDepth);
         this.depthBuffer.writeBufferToImage(fileName,1, 1);
     }
 
@@ -198,6 +211,11 @@ public class ViewPlane {
      */
     public void normalBufferToImage(String fileName) throws IOException {
         this.normalBuffer.writeBufferToImage(fileName, 1, 1);
+    }
+
+    public void intersectionBufferToImage(String fileName) throws IOException {
+        this.intersectionBuffer.rgbToHeatMap(maxIntersections);
+        this.intersectionBuffer.writeBufferToImage(fileName, 1, 1);
     }
 
     /**
@@ -270,5 +288,7 @@ public class ViewPlane {
         this.buffer.clear();
         this.depthBuffer.clear();
         this.normalBuffer.clear();
+        this.intersectionBuffer.clear();
     }
+
 }

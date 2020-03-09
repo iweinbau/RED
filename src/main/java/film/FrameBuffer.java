@@ -77,10 +77,10 @@ public class FrameBuffer {
         pixels[height][width].add(color);
     }
 
-    public void setBufferWeight(double weight) {
+    public void addBufferWeight(double weight) {
         for (int i = 0; i < this.bufferHeight; i++){
             for (int j = 0; j < this.bufferWidth; j++){
-                pixels[i][j].setWeight(weight);
+                pixels[i][j].addWeight(weight);
             }
         }
     }
@@ -179,6 +179,15 @@ public class FrameBuffer {
         for (int i = 0; i < this.bufferHeight; i++){
             for (int j = 0; j < this.bufferWidth; j++){
                 pixels[i][j] = new Pixel();
+            }
+        }
+    }
+
+    public void rgbToHeatMap(int maxIntersections) {
+        for (int i = 0; i < this.bufferHeight; i++){
+            for (int j = 0; j < this.bufferWidth; j++){
+                pixels[i][j].setRgbColor(
+                        RGBSpectrum.intToHeatMap(pixels[i][j].getSpectrum().get(0),maxIntersections));
             }
         }
     }

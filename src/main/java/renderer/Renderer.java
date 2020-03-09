@@ -11,9 +11,7 @@ import scene.Scene;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class Renderer implements RenderEventInterface {
 
@@ -80,7 +78,16 @@ public class Renderer implements RenderEventInterface {
 
             });
 
-            service.submit(thread);
+            //TODO: fix exception for multithreading
+            Future future = service.submit(thread);
+
+            try {
+                future.get();
+            } catch (ExecutionException ex) {
+                ex.getCause().printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         // execute the threads
@@ -125,6 +132,7 @@ public class Renderer implements RenderEventInterface {
             camera.bufferToImage("output.png",1.0,2.2);
             camera.normalBufferToImage("normalBuffer.png");
             camera.depthBufferToImage("depthBuffer.png");
+            camera.intersectionBufferToImage("intersection.png");
 
         } catch (IOException e) {
             e.printStackTrace();

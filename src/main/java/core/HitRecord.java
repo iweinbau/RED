@@ -51,6 +51,8 @@ public class HitRecord {
      */
     boolean hit = false;
 
+    public int intersectionTests = 0;
+
     /**
      *
      * get hit distance
@@ -111,5 +113,13 @@ public class HitRecord {
         else {
             return new SurfaceNode(globalHit,direction,normal,geometry,parent);
         }
+    }
+
+    public Geometry getGeometry() {
+        return this.geometry;
+    }
+
+    public Point3D getPoint() {
+        return this.globalHit;
     }
 }
