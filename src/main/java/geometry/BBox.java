@@ -66,7 +66,7 @@ public class BBox {
     }
 
     public Point3D center() {
-        return pMin.scale(0.5).add(pMax).scale(0.5);
+        return pMin.add(pMax).scale(0.5);
     }
     /**
      *

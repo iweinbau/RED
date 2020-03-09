@@ -12,7 +12,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 public class BVH extends Composite{
 
 
-    SplitMethod splitMethod = new EqualCountMethod();
+    SplitMethod splitMethod = new MidPointMethod();
 
     BVHNode root;
 
@@ -143,20 +143,30 @@ public class BVH extends Composite{
 
         @Override
         int split(List<GeometryInfo> geometryInfo, int start, int end, int splitAxis, BBox centered) {
-            double value = centered.center().get(splitAxis);
-            if (start == end)
-                return start;
-            geometryInfo.subList(start,end).sort((GeometryInfo i1, GeometryInfo i2) ->
-                    (i1.center.get(splitAxis).compareTo(i2.center.get(splitAxis))));
+            double centerValue = centered.center().get(splitAxis);
+            if (start == end) return start;
 
-            for (int i = start; i<end; i++) {
-                if (shouldSwap(geometryInfo.get(i),splitAxis,value)) {
+            int first = findFirst(geometryInfo, start, end, splitAxis, centerValue);
+            for (int i = first+1; i < end; i++) {
+                if (!shouldSwap(geometryInfo.get(i),splitAxis,centerValue)) {
+                    Collections.swap(geometryInfo,i,first);
+                    first++;
+                }
+            }
+            // this will be a bad split so do EqualCount for this case;
+            if( first == start || first == end)
+                return new EqualCountMethod().split(geometryInfo,start,end,splitAxis,centered);
+            return first;
+        }
+
+        private int findFirst(List<GeometryInfo> geometryInfo, int start, int end, int splitAxis, double value) {
+            for (int i = start; i < end; ++i) {
+                if(shouldSwap(geometryInfo.get(i),splitAxis,value)) {
                     return i;
                 }
             }
             return end;
         }
-
 
         boolean shouldSwap(GeometryInfo geometryInfo, int splitAxis, double value) {
             return geometryInfo.center.get(splitAxis) > value;
