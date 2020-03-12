@@ -3,17 +3,17 @@ package geometry;
 import core.HitRecord;
 import core.Ray;
 import material.Material;
-import math.ITransform;
+import math.ITransform3D;
 import math.Point3D;
-import math.Transform;
+import math.Transform3D;
 import math.Vector3D;
 
-public abstract class Geometry implements ITransform{
+public abstract class Geometry implements ITransform3D {
 
     /**
      * Transformation of this geometry.
      */
-    final Transform transform;
+    final Transform3D transform;
 
     /**
      * Material of this geometry.
@@ -25,7 +25,7 @@ public abstract class Geometry implements ITransform{
      * @param transform transformation of this object.
      * @param material material of this object.
      */
-    public Geometry(Transform transform, Material material) {
+    public Geometry(Transform3D transform, Material material) {
         this.transform = transform;
         this.material = material;
     }
@@ -34,7 +34,7 @@ public abstract class Geometry implements ITransform{
      * Base constructor
      * @param transform transformation of this object.
      */
-    public Geometry(Transform transform) {
+    public Geometry(Transform3D transform) {
         this.transform = transform;
         this.material = null;
     }

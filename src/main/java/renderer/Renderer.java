@@ -80,14 +80,13 @@ public class Renderer implements RenderEventInterface {
 
             //TODO: fix exception for multithreading
             Future future = service.submit(thread);
-
-            try {
-                future.get();
-            } catch (ExecutionException ex) {
-                ex.getCause().printStackTrace();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+//            try {
+//                future.get();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            } catch (ExecutionException e) {
+//                e.printStackTrace();
+//            }
         }
 
         // execute the threads

@@ -62,6 +62,32 @@ public class Matrix3 {
         return result;
     }
 
+    /**
+     *
+     * @param p
+     * @return
+     */
+    public Point2D multiply(Point2D p){
+        double x = get(0, 0) * p.x + get(0, 1) * p.y +
+                get(0, 2);
+        double y = get(1, 0) * p.x + get(1, 1) * p.y +
+                get(1, 2);
+        return new Point2D(x,y);
+    }
+
+    /**
+     *
+     * @param v
+     * @return
+     */
+    public Vector2D multiply(Vector2D v){
+        double x = get(0, 0) * v.x + get(0, 1) * v.y +
+                get(0, 2);
+        double y = get(1, 0) * v.x + get(1, 1) * v.y +
+                get(1, 2);
+        return new Vector2D(x,y);
+    }
+
     public Matrix3 scale(double scale){
         Matrix3 result = new Matrix3();
         for (int i = 0; i<3; i++) {

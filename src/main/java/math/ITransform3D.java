@@ -1,6 +1,6 @@
 package math;
 
-public interface ITransform {
+public interface ITransform3D {
     /**
      *
      * @param p

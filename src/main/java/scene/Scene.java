@@ -1,5 +1,6 @@
 package scene;
 
+import core.Constants;
 import core.HitRecord;
 import core.Ray;
 import geometry.Geometry;
@@ -11,13 +12,13 @@ import java.util.Collections;
 import java.util.LinkedList;
 
 public class Scene {
-    public static final double MAX_SCENE_DIST = Double.POSITIVE_INFINITY;
+
+    public static final double MAX_SCENE_DIST = Constants.kLarge;
 
     LinkedList<Geometry> objects = new LinkedList<>();
     LinkedList<Light> lights = new LinkedList<>();
 
-    public Scene() {
-    }
+    public Scene() {}
 
     public void addGeometry(Geometry... objects) {
         Collections.addAll(this.objects, objects);
@@ -57,13 +58,5 @@ public class Scene {
             }
         }
         return true;
-    }
-
-    public RGBSpectrum environmentLight(Ray ray) {
-        RGBSpectrum L = RGBSpectrum.BLACK;
-        for (Light light: lights) {
-            L = L.add(light.Le(ray));
-        }
-        return L;
     }
 }

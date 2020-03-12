@@ -23,7 +23,7 @@ public class AreaLight extends Light {
      * @param emission  Emission material
      */
     public AreaLight(Primitive primitive, Emission emission) {
-        super(emission.getI(), new Transform());
+        super(emission.getI(), new Transform3D());
         this.primitive = primitive;
         this.area = primitive.getArea();
     }

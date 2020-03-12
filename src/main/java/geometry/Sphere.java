@@ -1,10 +1,10 @@
 package geometry;
 
 import core.*;
-import light.AreaLight;
 import material.Material;
 import math.*;
 import sampler.Sampler;
+import textures.Constant;
 
 public class Sphere extends Geometry implements Primitive{
 
@@ -15,7 +15,7 @@ public class Sphere extends Geometry implements Primitive{
      * @param transform
      * @param material
      */
-    public Sphere(Transform transform,Material material) {
+    public Sphere(Transform3D transform, Material material) {
         super(transform, material);
     }
 
@@ -25,7 +25,7 @@ public class Sphere extends Geometry implements Primitive{
      * @param radius
      * @param material
      */
-    public Sphere(Transform transform, double radius, Material material) {
+    public Sphere(Transform3D transform, double radius, Material material) {
         super(transform, material);
         this.radius = radius;
     }
@@ -34,7 +34,7 @@ public class Sphere extends Geometry implements Primitive{
      * Construct new sphere object.
      * @param transform
      */
-    public Sphere(Transform transform) {
+    public Sphere(Transform3D transform) {
         super(transform);
     }
 
@@ -76,8 +76,15 @@ public class Sphere extends Geometry implements Primitive{
             // we hit
             Point3D localHit = localRay.getPointAlongRay(t);
             Point3D globalHit = ray.getPointAlongRay(t);
+            double phi = Math.atan2(localHit.getZ(),localHit.getX());
+            if(phi < 0)
+                phi += 2*Constants.PI;
+            double theta = Math.min(1,Math.max(Math.acos(localHit.getY()/radius),-1));
+            double u = phi * 0.5 * Constants.invPI;
+            double v = theta * Constants.invPI;
+            Point2D uv = new Point2D(u,v);
             Normal normal =  globalHit.subtract(transform.localToGlobal(new Point3D(0))).normalize().toNormal();
-            hitRecord.setIntersection(ray.getDirection().neg(), this, localHit, globalHit, normal,t);
+            hitRecord.setIntersection(ray.getDirection().neg(), this, localHit, globalHit, uv, normal,t);
             return true;
 
         }

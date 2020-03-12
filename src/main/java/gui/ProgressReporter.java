@@ -111,11 +111,10 @@ public class ProgressReporter implements RenderEventListener {
 	public void start() {
 		done = 0;
 		plusses = "";
-		startTime = System.currentTimeMillis();
-
 		// initialize the spaces string
 		for (int i = 0; i < barLength; ++i)
 			spaces = spaces.concat(" ");
+		startTime = System.currentTimeMillis();
 	}
 
 	/**

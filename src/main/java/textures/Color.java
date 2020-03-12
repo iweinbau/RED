@@ -1,7 +1,7 @@
 package textures;
 
-import math.Point2D;
 import math.RGBSpectrum;
+import pathnode.ScatterNode;
 
 public class Color extends Texture<RGBSpectrum> {
 
@@ -12,12 +12,7 @@ public class Color extends Texture<RGBSpectrum> {
     }
 
     @Override
-    public RGBSpectrum evaluate() {
-        return color;
-    }
-
-    @Override
-    public RGBSpectrum evaluate(Point2D uv) {
+    public RGBSpectrum evaluate(ScatterNode scatterNode) {
         return color;
     }
 }

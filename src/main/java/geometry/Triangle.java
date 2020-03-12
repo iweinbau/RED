@@ -4,7 +4,6 @@ import core.*;
 import material.Material;
 import math.*;
 import sampler.Sampler;
-import textures.Constant;
 
 public class Triangle extends Geometry implements Primitive {
 
@@ -17,6 +16,8 @@ public class Triangle extends Geometry implements Primitive {
      * Triangle normal in local space.
      */
     Normal n0,n1,n2;
+
+    Point2D uv0,uv1,uv2;
 
     /**
      * reference to triangle mesh.
@@ -32,7 +33,7 @@ public class Triangle extends Geometry implements Primitive {
      * @param transform object transform.
      * @param material object material.
      */
-    public Triangle(int p0, int p1, int p2, TriangleMesh mesh, Transform transform, Material material) {
+    public Triangle(int p0, int p1, int p2, TriangleMesh mesh, Transform3D transform, Material material) {
         super(transform, material);
         this.p0 = mesh.getVertices(p0);
         this.p1 = mesh.getVertices(p1);
@@ -40,6 +41,9 @@ public class Triangle extends Geometry implements Primitive {
         this.n0 = mesh.getNormals(p0);
         this.n1 = mesh.getNormals(p1);
         this.n2 = mesh.getNormals(p2);
+        this.uv0 = mesh.getUv(p0);
+        this.uv1 = mesh.getUv(p1);
+        this.uv2 = mesh.getUv(p2);
         this.mesh = mesh;
     }
 
@@ -51,7 +55,7 @@ public class Triangle extends Geometry implements Primitive {
      * @param transform triangle transformation.
      * @param material material transformation.
      */
-    public Triangle(Point3D p0, Point3D p1, Point3D p2, Transform transform, Material material) {
+    public Triangle(Point3D p0, Point3D p1, Point3D p2, Transform3D transform, Material material) {
         super(transform, material);
         this.p0 = p0;
         this.p1 = p1;
@@ -93,10 +97,15 @@ public class Triangle extends Geometry implements Primitive {
             return false;
 
         Normal normal;
-        if(mesh != null)
+        Point2D uv;
+        if(mesh != null) {
             normal = n0.scale(1 - gamma - beta).add(n1.scale(beta)).add(n2.scale(gamma)).normalize().toNormal();
-        else
+            uv = uv0.scale(1 - gamma - beta).add(uv1.scale(beta)).add(uv2.scale(gamma));
+        }
+        else {
             normal = n0;
+            uv = new Point2D();
+        }
 
         // we intersect this triangle
         Point3D localHit = p0.add(p1.subtract(p0).scale(beta)).add(p2.subtract(p0).scale(gamma))
@@ -104,7 +113,7 @@ public class Triangle extends Geometry implements Primitive {
         Point3D globalHit = transform.localToGlobal(localHit).add(normal.scale(Constants.kEps));
 
         hitRecord.setIntersection(ray.getDirection().neg(),
-                this,localHit,globalHit,transform.localToGlobal(normal).normalize().toNormal(),t);
+                this,localHit,globalHit,uv,transform.localToGlobal(normal).normalize().toNormal(),t);
 
         return true;
     }

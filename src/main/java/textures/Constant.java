@@ -1,6 +1,6 @@
 package textures;
 
-import math.Point2D;
+import pathnode.ScatterNode;
 
 public class Constant extends Texture<Double> {
 
@@ -11,12 +11,7 @@ public class Constant extends Texture<Double> {
     }
 
     @Override
-    public Double evaluate() {
-        return constant;
-    }
-
-    @Override
-    public Double evaluate(Point2D uv) {
+    public Double evaluate(ScatterNode scatterNode) {
         return constant;
     }
 }

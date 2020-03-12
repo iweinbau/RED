@@ -3,7 +3,6 @@ package geometry;
 import core.Constants;
 import core.HitRecord;
 import core.Ray;
-import core.SurfaceSample;
 import material.Material;
 import math.*;
 
@@ -26,7 +25,7 @@ public class Box extends Geometry{
      * @param transform
      * @param material
      */
-    public Box(Transform transform, Material material) {
+    public Box(Transform3D transform, Material material) {
         super(transform, material);
     }
 
@@ -34,7 +33,7 @@ public class Box extends Geometry{
      * Construct new Box with a given transformation and material.
      * @param transform
      */
-    public Box(Transform transform) {
+    public Box(Transform3D transform) {
         super(transform);
     }
 
@@ -126,7 +125,7 @@ public class Box extends Geometry{
             }
             Point3D localHit = localRay.getPointAlongRay(tmin);
             Point3D globalHit = ray.getPointAlongRay(tmin);
-            hitRecord.setIntersection(ray.getDirection().neg(), this, localHit, globalHit,
+            hitRecord.setIntersection(ray.getDirection().neg(), this, localHit, globalHit,new Point2D(),
                     transform.localToGlobal(normal),tmin);
             return true;
 

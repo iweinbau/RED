@@ -121,7 +121,7 @@ public class OBJLoader extends MeshLoader {
             texturesArray[i] = uvs.get(vertices.get(i).uvIndex);
         }
 
-        return new TriangleMesh(verticesArray,normalsArray,indicesArray);
+        return new TriangleMesh(verticesArray,texturesArray,normalsArray,indicesArray);
     }
 
     /**

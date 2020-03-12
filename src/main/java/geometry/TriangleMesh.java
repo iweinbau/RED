@@ -1,6 +1,7 @@
 package geometry;
 
 import math.Normal;
+import math.Point2D;
 import math.Point3D;
 
 /**
@@ -13,6 +14,11 @@ public class TriangleMesh {
      * vertices locations in local space.
      */
     private Point3D[] vertices;
+
+    /**
+     *
+     */
+    private Point2D[] uvs;
 
     /**
      * vertices normals in local space.
@@ -40,10 +46,11 @@ public class TriangleMesh {
      * @param normals normals array.
      * @param indices indices array.
      */
-    public TriangleMesh(Point3D[] vertices, Normal[] normals, int[] indices) {
+    public TriangleMesh(Point3D[] vertices, Point2D[] uvs, Normal[] normals, int[] indices) {
         this.vertices = vertices;
         this.normals = normals;
         this.indices = indices;
+        this.uvs = uvs;
         this.numVer = vertices.length;
         this.numTris = indices.length / 3;
     }
@@ -55,6 +62,15 @@ public class TriangleMesh {
      */
     public Point3D getVertices(int index) {
         return this.vertices[index];
+    }
+
+    /**
+     * get uv at index.
+     * @param index the index in uv array.
+     * @return Point2D
+     */
+    public Point2D getUv(int index) {
+        return this.uvs[index];
     }
 
     /**

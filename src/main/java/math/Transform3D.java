@@ -2,11 +2,11 @@ package math;
 
 import core.Ray;
 
-public class Transform implements ITransform {
+public class Transform3D implements ITransform3D {
     Matrix4 T = Matrix4.IDENTITY;
     Matrix4 inverseT = Matrix4.IDENTITY;
 
-    public Transform() {
+    public Transform3D() {
 
     }
 

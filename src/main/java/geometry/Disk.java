@@ -7,7 +7,6 @@ import core.SurfaceSample;
 import material.Material;
 import math.*;
 import sampler.Sampler;
-import textures.Constant;
 
 public class Disk extends Geometry implements Primitive {
 
@@ -19,12 +18,12 @@ public class Disk extends Geometry implements Primitive {
 
     private Normal normalT;
 
-    public Disk(Transform transform, Material material) {
+    public Disk(Transform3D transform, Material material) {
         super(transform, material);
         normalT = transform.localToGlobal(normal).normalize().toNormal();
     }
 
-    public Disk(Transform transform) {
+    public Disk(Transform3D transform) {
         super(transform);
         normalT = transform.localToGlobal(normal).normalize().toNormal();
     }
@@ -49,7 +48,14 @@ public class Disk extends Geometry implements Primitive {
         if (isOnDisk(localPoint)) {
             Point3D globalPoint = ray.getPointAlongRay(t);
             Normal n = transform.localToGlobal(normal);
-            hitRecord.setIntersection(ray.getDirection().neg(),this,localPoint,globalPoint,n,t);
+            double phi = Math.atan2(localPoint.getZ(),localPoint.getX());
+            if(phi < 0)
+                phi += 2*Constants.PI;
+            double r = localPoint.toVector().length();
+            double u = phi * 0.5 * Constants.invPI;
+            double v = 1-r;
+            Point2D uv = new Point2D(u,v);
+            hitRecord.setIntersection(ray.getDirection().neg(),this,localPoint,globalPoint,uv,n,t);
             return true;
         }
 

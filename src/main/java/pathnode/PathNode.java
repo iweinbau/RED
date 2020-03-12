@@ -101,7 +101,7 @@ public abstract class PathNode{
     }
 
     public Ray rayFormParent() {
-        throw new NotImplementedException();
+        return new Ray(this.position,wo);
     }
 
     public Point3D getPosition() {
@@ -110,7 +110,7 @@ public abstract class PathNode{
 
     protected double distanceTo(PathNode other) {
         if(other.position == null)
-            return 1;
+            return 0;
         return other.position.subtract(this.position).length();
     }
 }

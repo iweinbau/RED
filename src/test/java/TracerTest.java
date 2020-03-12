@@ -1,7 +1,5 @@
 import camera.PerspectiveCamera;
-import geometry.BVH;
 import geometry.Box;
-import geometry.Composite;
 import geometry.Sphere;
 import gui.ProgressReporter;
 import integrator.DirectLightIntegrator;
@@ -10,11 +8,10 @@ import light.PointLight;
 import material.Matte;
 import math.Point3D;
 import math.RGBSpectrum;
-import math.Transform;
+import math.Transform3D;
 import math.Vector3D;
 import org.junit.Test;
 import renderer.Renderer;
-import sampler.Sampler;
 import scene.Scene;
 import textures.Color;
 import textures.Constant;
@@ -34,7 +31,7 @@ public class TracerTest {
     @Test
     public void sphereObjectTest() throws IOException {
 
-        BufferedWriter writer = new BufferedWriter(new FileWriter("measurements_sphere.txt", false));
+        BufferedWriter writer = new BufferedWriter(new FileWriter("./Measurements/Milestone1/measurements_sphere.txt", false));
 
         // initialize the progress reporter
         final ProgressReporter reporter = new ProgressReporter("Rendering", 40,
@@ -46,8 +43,8 @@ public class TracerTest {
 
         Scene scene = new Scene();
 
-        Transform lightT;
-        lightT = new Transform();
+        Transform3D lightT;
+        lightT = new Transform3D();
         lightT.translate(new Point3D(2,1,2));
         scene.addLight(new PointLight(new RGBSpectrum(1),lightT));
 
@@ -70,7 +67,7 @@ public class TracerTest {
             writer.write(String.format("%d ",i));
             System.out.println(String.format("%d ",i));
             for (int j = 0; j < i-prevInt; j++) {
-                Transform Tobj = new Transform();
+                Transform3D Tobj = new Transform3D();
                 Tobj.scale(radius);
                 Tobj.translate(new Point3D(
                         1 - 2 * rand.nextDouble(),
@@ -102,7 +99,7 @@ public class TracerTest {
     @Test
     public void boxObjectTest() throws IOException {
 
-        BufferedWriter writer = new BufferedWriter(new FileWriter("measurements_box.txt", false));
+        BufferedWriter writer = new BufferedWriter(new FileWriter("./Measurements/Milestone1/measurements_box.txt", false));
 
         // initialize the progress reporter
         final ProgressReporter reporter = new ProgressReporter("Rendering", 40,
@@ -114,8 +111,8 @@ public class TracerTest {
 
         Scene scene = new Scene();
 
-        Transform lightT;
-        lightT = new Transform();
+        Transform3D lightT;
+        lightT = new Transform3D();
         lightT.translate(new Point3D(2,1,2));
         scene.addLight(new PointLight(new RGBSpectrum(1),lightT));
 
@@ -138,7 +135,7 @@ public class TracerTest {
             writer.write(String.format("%d ",i));
             System.out.println(String.format("%d ",i));
             for (int j = 0; j < i-prevInt; j++) {
-                Transform Tobj = new Transform();
+                Transform3D Tobj = new Transform3D();
                 Tobj.scale(radius);
                 Tobj.rotate(new Vector3D(
                         90 * rand.nextDouble(),
@@ -174,7 +171,7 @@ public class TracerTest {
     @Test
     public void LightTest() throws IOException {
 
-        BufferedWriter writer = new BufferedWriter(new FileWriter("measurements_lights.txt", false));
+        BufferedWriter writer = new BufferedWriter(new FileWriter("./Measurements/Milestone1/measurements_lights.txt", false));
 
         // initialize the progress reporter
         final ProgressReporter reporter = new ProgressReporter("Rendering", 40,
@@ -201,7 +198,7 @@ public class TracerTest {
         renderer.addRenderEventListener(reporter);
 
         for (int i = 0; i < 10; i++) {
-            Transform Tobj = new Transform();
+            Transform3D Tobj = new Transform3D();
             Tobj.scale(radius);
             Tobj.translate(new Point3D(
                     1 - 2 * rand.nextDouble(),
@@ -220,7 +217,7 @@ public class TracerTest {
             writer.write(String.format("%d ",i));
             System.out.println(String.format("%d ",i));
             for (int j = 0; j < i-prevInt; j++) {
-                Transform lightT = new Transform();
+                Transform3D lightT = new Transform3D();
                 lightT.translate(new Point3D(
                                 1 - 2 * rand.nextDouble(),
                                 1 - 2 * rand.nextDouble(),
@@ -241,48 +238,6 @@ public class TracerTest {
         }
 
         writer.close();
-    }
-
-
-    @Test
-    public void BVHTest(){
-
-        // initialize the progress reporter
-        final ProgressReporter reporter = new ProgressReporter("Rendering", 40,
-                width * height,true);
-
-        PerspectiveCamera camera = new PerspectiveCamera(
-                new Point3D(0,3,2),
-                new Point3D(0f),width,height,90);
-
-        Scene scene = new Scene();
-
-        Composite bvh = new Composite(new Transform());
-        Transform objT = new Transform();
-        objT.translate(new Point3D(1,0,0));
-        Sphere s = new Sphere(objT,new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1)));
-        bvh.addGeometry(s);
-        objT = new Transform();
-        objT.translate(new Point3D(-1,0,0));
-        s = new Sphere(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1)));
-        bvh.addGeometry(s);
-        objT = new Transform();
-        objT.translate(new Point3D(2.5,0,0));
-        s = new Sphere(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1)));
-        bvh.addGeometry(s);
-
-
-        Integrator integrator = new DirectLightIntegrator();
-        Renderer renderer = new Renderer(1);
-
-        renderer.setIntegrator(integrator);
-        renderer.setCamera(camera);
-        renderer.setScene(scene);
-
-        renderer.addRenderEventListener(reporter);
-
-        renderer.startRender();
-
     }
 
 }

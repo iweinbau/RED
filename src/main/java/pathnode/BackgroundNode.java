@@ -12,7 +12,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 public class BackgroundNode extends ScatterNode {
 
     public BackgroundNode(Vector3D wo, PathNode parent) {
-        super(null,wo,null,parent);
+        super(null, null,wo,null,parent);
     }
 
     @Override

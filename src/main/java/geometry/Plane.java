@@ -3,10 +3,8 @@ package geometry;
 import core.Constants;
 import core.HitRecord;
 import core.Ray;
-import core.SurfaceSample;
 import material.Material;
 import math.*;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class Plane extends Geometry {
 
@@ -25,7 +23,7 @@ public class Plane extends Geometry {
      * @param transform Plane transformation object.
      * @param material Plane material.
      */
-    public Plane(Transform transform, Material material) {
+    public Plane(Transform3D transform, Material material) {
         super(transform, material);
         this.planeNormal = transform.localToGlobal(new Normal(0,1,0)).normalize().toNormal();
         this.planePoint = transform.localToGlobal(new Point3D(0,0,0));
@@ -35,7 +33,7 @@ public class Plane extends Geometry {
      * Construct new Plane without any material.
      * @param transform
      */
-    public Plane(Transform transform) {
+    public Plane(Transform3D transform) {
         super(transform);
     }
 
@@ -54,7 +52,8 @@ public class Plane extends Geometry {
         if(t > Constants.kEps) {
             Point3D localPoint = localRay.getPointAlongRay(t);
             Point3D globalHitPoint = ray.getPointAlongRay(t);
-            hitRecord.setIntersection(ray.getDirection().neg(),this,localPoint,globalHitPoint,planeNormal,t);
+            Point2D uv = new Point2D(localPoint.getX(), localPoint.getY());
+            hitRecord.setIntersection(ray.getDirection().neg(),this,localPoint,globalHitPoint,uv,planeNormal,t);
             return true;
         }
         return false;

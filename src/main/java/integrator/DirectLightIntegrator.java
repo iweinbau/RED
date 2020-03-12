@@ -1,5 +1,6 @@
 package integrator;
 
+import light.Light;
 import math.RGBSpectrum;
 import pathnode.EyeNode;
 import pathnode.ScatterNode;
@@ -36,6 +37,10 @@ public class DirectLightIntegrator extends Integrator {
 
         if(scatterNode.isSurfaceNode()) {
             L = L.add(directLights(scatterNode,scene,sampler));
+        }else {
+            for (Light light : scene.getLights()) {
+                L = L.add(light.Le(scatterNode.rayFormParent()));
+            }
         }
         return L;
     }

@@ -14,14 +14,14 @@ public abstract class Light {
     /**
      * Light transformation.
      */
-    Transform transform;
+    Transform3D transform;
 
     /**
      * Construct new light with given power.
      * @param I the light power.
      * @param transform transformation of the light source.
      */
-    public Light(RGBSpectrum I,Transform transform) {
+    public Light(RGBSpectrum I, Transform3D transform) {
         this.I = I;
         this.transform = transform;
     }

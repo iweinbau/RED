@@ -1,8 +1,7 @@
 package textures;
 
-import math.Point2D;
+import pathnode.ScatterNode;
 
 public abstract class Texture<T> {
-    public abstract T evaluate();
-    public abstract T evaluate(Point2D uv);
+    public abstract T evaluate(ScatterNode scatterNode);
 }

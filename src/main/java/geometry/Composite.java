@@ -2,7 +2,6 @@ package geometry;
 
 import core.HitRecord;
 import core.Ray;
-import core.SurfaceSample;
 import material.Material;
 import math.*;
 
@@ -23,7 +22,7 @@ public class Composite extends Geometry {
      * Construct new composite.
      * @param transform transform of the root object.
      */
-    public Composite(Transform transform) {
+    public Composite(Transform3D transform) {
         super(transform);
     }
 
@@ -33,7 +32,7 @@ public class Composite extends Geometry {
      * @param mesh triangle mesh
      * @param material material
      */
-    public Composite(Transform transform, TriangleMesh mesh, Material material) {
+    public Composite(Transform3D transform, TriangleMesh mesh, Material material) {
         super(transform, material);
         int [] indices = mesh.getIndices();
         for (int i = 0; i < indices.length; i+=3) {

@@ -2,25 +2,23 @@ package geometry;
 
 import core.HitRecord;
 import core.Ray;
-import core.SurfaceSample;
 import material.Material;
 import math.*;
 
 import java.util.*;
-import java.util.concurrent.LinkedBlockingDeque;
 
 public class BVH extends Composite{
 
 
-    SplitMethod splitMethod = new MidPointMethod();
+    SplitMethod splitMethod = new EqualCountMethod();
 
     BVHNode root;
 
-    public BVH(Transform transform) {
+    public BVH(Transform3D transform) {
         super(transform);
     }
 
-    public BVH(Transform transform, TriangleMesh mesh, Material material) {
+    public BVH(Transform3D transform, TriangleMesh mesh, Material material) {
         super(transform, mesh, material);
     }
 
@@ -135,57 +133,6 @@ public class BVH extends Composite{
         return hit;
     }
 
-    abstract class SplitMethod {
-        abstract int split(List<GeometryInfo> geometryInfo, int start, int end, int splitAxis, BBox centered);
-    }
-
-    class MidPointMethod extends SplitMethod {
-
-        @Override
-        int split(List<GeometryInfo> geometryInfo, int start, int end, int splitAxis, BBox centered) {
-            double centerValue = centered.center().get(splitAxis);
-            if (start == end) return start;
-
-            int first = findFirst(geometryInfo, start, end, splitAxis, centerValue);
-            for (int i = first+1; i < end; i++) {
-                if (!shouldSwap(geometryInfo.get(i),splitAxis,centerValue)) {
-                    Collections.swap(geometryInfo,i,first);
-                    first++;
-                }
-            }
-            // this will be a bad split so do EqualCount for this case;
-            if( first == start || first == end)
-                return new EqualCountMethod().split(geometryInfo,start,end,splitAxis,centered);
-            return first;
-        }
-
-        private int findFirst(List<GeometryInfo> geometryInfo, int start, int end, int splitAxis, double value) {
-            for (int i = start; i < end; ++i) {
-                if(shouldSwap(geometryInfo.get(i),splitAxis,value)) {
-                    return i;
-                }
-            }
-            return end;
-        }
-
-        boolean shouldSwap(GeometryInfo geometryInfo, int splitAxis, double value) {
-            return geometryInfo.center.get(splitAxis) > value;
-        }
-
-    }
-
-    class EqualCountMethod extends SplitMethod{
-
-        @Override
-        int split(List<GeometryInfo> geometryInfo, int start, int end, int splitAxis, BBox centered) {
-            if (start == end)
-                return start;
-            geometryInfo.subList(start,end).sort((GeometryInfo i1, GeometryInfo i2) ->
-                    (i1.center.get(splitAxis).compareTo(i2.center.get(splitAxis))));
-            return ((start + end) / 2);
-        }
-    }
-
     private class BVHNode {
         BBox bBox;
         BVHNode leftNode;
@@ -210,7 +157,7 @@ public class BVH extends Composite{
         }
     }
 
-    private class GeometryInfo {
+    class GeometryInfo {
         Point3D center;
         BBox bBox;
         int geometryNumber;
@@ -221,4 +168,56 @@ public class BVH extends Composite{
             this.center = bBox.center();
         }
     }
+
+    public abstract class SplitMethod {
+        abstract int split(List<BVH.GeometryInfo> geometryInfo, int start, int end, int splitAxis, BBox centered);
+    }
+
+    public class MidPointMethod extends SplitMethod {
+
+        @Override
+        int split(List<BVH.GeometryInfo> geometryInfo, int start, int end, int splitAxis, BBox centered) {
+            double centerValue = centered.center().get(splitAxis);
+            if (start == end) return start;
+
+            int first = findFirst(geometryInfo, start, end, splitAxis, centerValue);
+            for (int i = first+1; i < end; i++) {
+                if (!shouldSwap(geometryInfo.get(i),splitAxis,centerValue)) {
+                    Collections.swap(geometryInfo,i,first);
+                    first++;
+                }
+            }
+            // this will be a bad split so do EqualCount for this case;
+            if( first == start || first == end)
+                return new EqualCountMethod().split(geometryInfo,start,end,splitAxis,centered);
+            return first;
+        }
+
+        private int findFirst(List<BVH.GeometryInfo> geometryInfo, int start, int end, int splitAxis, double value) {
+            for (int i = start; i < end; ++i) {
+                if(shouldSwap(geometryInfo.get(i),splitAxis,value)) {
+                    return i;
+                }
+            }
+            return end;
+        }
+
+        boolean shouldSwap(BVH.GeometryInfo geometryInfo, int splitAxis, double value) {
+            return geometryInfo.center.get(splitAxis) > value;
+        }
+
+    }
+
+    public class EqualCountMethod extends SplitMethod{
+
+        @Override
+        int split(List<BVH.GeometryInfo> geometryInfo, int start, int end, int splitAxis, BBox centered) {
+            if (start == end)
+                return start;
+            geometryInfo.subList(start,end).sort((BVH.GeometryInfo i1, BVH.GeometryInfo i2) ->
+                    (i1.center.get(splitAxis).compareTo(i2.center.get(splitAxis))));
+            return ((start + end) / 2);
+        }
+    }
 }
+

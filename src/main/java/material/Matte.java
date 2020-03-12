@@ -27,7 +27,7 @@ public class Matte extends Material {
      * @param cd
      * @param kd
      */
-    public Matte(Color cd, Constant kd) {
+    public Matte(Texture<RGBSpectrum> cd, Constant kd) {
         this.cd = cd;
         this.kd = kd;
     }
@@ -38,6 +38,6 @@ public class Matte extends Material {
      */
     @Override
     public void calculateBRDF(ScatterNode scatterNode) {
-        scatterNode.setBxRDF(new LambertianReflection(cd.evaluate().scale(kd.evaluate())));
+        scatterNode.setBxRDF(new LambertianReflection(cd.evaluate(scatterNode).scale(kd.evaluate(scatterNode))));
     }
 }

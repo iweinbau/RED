@@ -1,10 +1,7 @@
 package pathnode;
 
 import bxrdf.BxRDF;
-import math.Normal;
-import math.Point3D;
-import math.RGBSpectrum;
-import math.Vector3D;
+import math.*;
 
 /**
  *
@@ -18,14 +15,21 @@ public abstract class ScatterNode extends PathNode {
      */
     Normal normal;
 
+    Point2D uv;
+
     /**
      * Bxrdf at surface, null if it is a background node
      */
     BxRDF bxRDF;
 
-    public ScatterNode(Point3D position, Vector3D wo, Normal normal,PathNode parent) {
+    public ScatterNode(Point3D position, Point2D uv, Vector3D wo, Normal normal,PathNode parent) {
         super(position,wo,parent);
         this.normal = normal;
+        this.uv = uv;
+    }
+
+    public Point2D getUv() {
+        return this.uv;
     }
 
     public abstract RGBSpectrum Le();

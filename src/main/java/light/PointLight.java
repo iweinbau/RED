@@ -3,7 +3,6 @@ package light;
 import core.Constants;
 import math.*;
 import pathnode.ScatterNode;
-import textures.Constant;
 
 public class PointLight extends Light{
 
@@ -17,7 +16,7 @@ public class PointLight extends Light{
      * @param I
      * @param transform
      */
-    public PointLight(RGBSpectrum I,Transform transform) {
+    public PointLight(RGBSpectrum I, Transform3D transform) {
         super(I,transform);
         lightPosition = transform.localToGlobal(new Point3D(0));
     }

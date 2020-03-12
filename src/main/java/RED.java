@@ -7,18 +7,20 @@ import gui.ProgressReporter;
 import gui.RenderFrame;
 import integrator.DirectLightIntegrator;
 import light.AreaLight;
+import light.EnvironmentLight;
 import light.PointLight;
 import material.Emission;
 import material.Matte;
-import math.Point3D;
-import math.RGBSpectrum;
-import math.Transform;
-import math.Vector3D;
+import math.*;
 import parser.MeshFactory;
 import renderer.Renderer;
 import scene.Scene;
+import textures.CheckerTexture;
 import textures.Color;
 import textures.Constant;
+import textures.UVTexture;
+import textures.texturemap.SphericalMap;
+import textures.texturemap.UVMap;
 
 /**
  * Entry point of your renderer.
@@ -43,9 +45,9 @@ public class RED {
 		double gamma = 2.2;
 		boolean gui = true;
 		boolean quiet = false;
-		Point3D origin = new Point3D(0,2,2);
+		Point3D origin = new Point3D (0,2,3);
 		Vector3D lookup = new Vector3D(0,1,0);
-		Point3D destination = new Point3D(0, 1, 0);
+		Point3D destination = new Point3D(0,0,0);
 		double fov = 90;
 		String filename = "output.png";
 
@@ -146,7 +148,7 @@ public class RED {
 		 * Initialize the camera and graphical user interface
 		 *********************************************************************/
 
-		final Renderer renderer = new Renderer(1);
+		final Renderer renderer = new Renderer(100);
 
 		// initialize the progress reporter
 		final ProgressReporter reporter = new ProgressReporter("Rendering", 40,
@@ -180,7 +182,7 @@ public class RED {
 		renderer.setIntegrator(new DirectLightIntegrator());
 
 		Random rand = new Random();
-		Transform objT = new Transform();
+		Transform3D objT = new Transform3D();
 
 		// CUBE DEMO:
 //		objT.rotate(new Vector3D(
@@ -191,28 +193,35 @@ public class RED {
 //		scene.addGeometry(s);
 
 //		// SPHERE DEMO
-		objT = new Transform();
+		objT = new Transform3D();
 		objT.translate(new Point3D(0,-0.5,0));
 		Plane p1 = new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1)));
 		//scene.addGeometry(p1);
 
-//		objT = new Transform();
-//		objT.translate(new Point3D(0,1,0));
-//		objT.scale(new Vector3D(2,0,0));
-//		Sphere s = new Sphere(objT,new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1)));
-//		scene.addGeometry(s);
+		objT = new Transform3D();
+		objT.scale(5);
+		//objT.rotateX(90);
+		Transform2D T = new Transform2D();
+		T.scale(10);
+		T.translate(new Point2D(0.5,0.3));
+		T.rotate(45);
+		Quad s = new Quad(objT,new Matte(new CheckerTexture(
+				new UVMap(T),
+				new Color(new RGBSpectrum(1,0.5,0)),
+				new Color(new RGBSpectrum(0.5,0,0))),new Constant(1)));
+		scene.addGeometry(s);
 
-//		BVH bvh = new BVH(new Transform());
-//		objT = new Transform();
+//		BVH bvh = new BVH(new Transform3D());
+//		objT = new Transform3D();
 //		objT.scale(new Vector3D(2,1,1));
 //		//objT.translate(new Point3D(2,0,0));
 //		Sphere s1 = new Sphere(objT,new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1)));
 //		bvh.addGeometry(s1);
-//		objT = new Transform();
+//		objT = new Transform3D();
 //		objT.translate(new Point3D(-1,0,0));
 //		Sphere s2 = new Sphere(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1)));
 //		//bvh.addGeometry(s2);
-//		objT = new Transform();
+//		objT = new Transform3D();
 //		objT.translate(new Point3D(2.5,0,0));
 //		Sphere s3 = new Sphere(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1)));
 //		//bvh.addGeometry(s3);
@@ -224,7 +233,7 @@ public class RED {
 		// TRIANGLE SPHERE DEMO SMOOTH
 		MeshFactory factory = new MeshFactory();
 		TriangleMesh mesh = factory.getTriangleMesh("armadillo.obj");
-		objT = new Transform();
+		objT = new Transform3D();
 		objT.rotateY(-90);
 		BVH comp = new BVH(objT,mesh,
 				new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1)));
@@ -234,39 +243,42 @@ public class RED {
 		// TRIANGLE SPHERE DEMO FLAT
 //		MeshFactory factory = new MeshFactory();
 //		TriangleMesh mesh = factory.getTriangleMesh("sphere.obj");
-//		objT = new Transform();
+//		objT = new Transform3D();
 //		BVH comp = new BVH(objT,mesh,
 //				new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1)));
 //		comp.buildAccelerationStructure();
 //		scene.addGeometry(comp);
 
-		Transform lightT = new Transform();
+		Transform3D lightT = new Transform3D();
 		lightT.rotateX(90);
 		lightT.translate(new Point3D(0,2,-2));
 		Emission emit = new Emission(new RGBSpectrum(0.5,0.5,0));
 		Quad lObjq = new Quad(lightT, emit);
 
 		//scene.addGeometry(lObjq);
-		//scene.addLight(new AreaLight(lObjq, emit));
+		scene.addLight(new AreaLight(lObjq, emit));
 
-		lightT = new Transform();
+		lightT = new Transform3D();
 		lightT.translate(new Point3D(2,2,3));
 		emit = new Emission(new RGBSpectrum(2));
 		Sphere lObjs = new Sphere(lightT,0.5,emit);
 
 		//scene.addGeometry(lObjs);
-		//scene.addLight(new AreaLight(lObjs,emit));
+		scene.addLight(new AreaLight(lObjs,emit));
 
-		lightT = new Transform();
+		EnvironmentLight eLight = new EnvironmentLight(new RGBSpectrum(1,0.5,0),new Transform3D());
+		//scene.addLight(eLight);
+
+		lightT = new Transform3D();
 		lightT.translate(new Point3D(2,3,3));
-		scene.addLight(new PointLight(new RGBSpectrum(1),lightT));
+		//scene.addLight(new PointLight(new RGBSpectrum(1),lightT));
 
-		lightT = new Transform();
+		lightT = new Transform3D();
 		lightT.translate(new Point3D(0,3,3));
-		scene.addLight(new PointLight(new RGBSpectrum(1),lightT));
+		//scene.addLight(new PointLight(new RGBSpectrum(1),lightT));
 
-		lightT = new Transform();
+		lightT = new Transform3D();
 		lightT.translate(new Point3D(-2,2,3));
-		scene.addLight(new PointLight(new RGBSpectrum(1,1,0),lightT));
+		//scene.addLight(new PointLight(new RGBSpectrum(1),lightT));
 	}
 }

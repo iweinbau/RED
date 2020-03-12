@@ -2,6 +2,7 @@ package core;
 
 import geometry.Geometry;
 import math.Normal;
+import math.Point2D;
 import math.Point3D;
 import math.Vector3D;
 import pathnode.BackgroundNode;
@@ -46,6 +47,8 @@ public class HitRecord {
      */
     Geometry geometry;
 
+    Point2D uv;
+
     /**
      * flag for when we hit something.
      */
@@ -70,11 +73,12 @@ public class HitRecord {
      * @param object geometry
      * @param localHit local hit point
      * @param globalHit global hit point
+     * @param uv uv
      * @param normal surface normal
      * @param t hit distance.
      */
     public void setIntersection(Vector3D direction, Geometry object, Point3D localHit,
-                               Point3D globalHit, Normal normal, double t) {
+                               Point3D globalHit, Point2D uv, Normal normal, double t) {
         this.distance = t;
         this.localHit = localHit;
         this.globalHit = globalHit;
@@ -82,6 +86,7 @@ public class HitRecord {
         this.geometry = object;
         this.direction = direction;
         this.hit = true;
+        this.uv = uv;
     }
 
     /**
@@ -98,11 +103,12 @@ public class HitRecord {
         this.geometry = record.geometry;
         this.direction = record.direction;
         this.hit = record.hit;
+        this.uv = record.uv;
     }
 
     /**
      *
-     * Transform hit record the a new scatter node.
+     * Transform3D hit record the a new scatter node.
      * If no hit occurred it returns a BackgroundNode else it returns a SurfaceNode.
      * @param parent origin node.
      * @return new ScatterNode.
@@ -111,7 +117,7 @@ public class HitRecord {
         if(!hit)
             return new BackgroundNode(direction,parent);
         else {
-            return new SurfaceNode(globalHit,direction,normal,geometry,parent);
+            return new SurfaceNode(globalHit,uv,direction,normal,geometry,parent);
         }
     }
 

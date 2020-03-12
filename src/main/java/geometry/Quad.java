@@ -23,13 +23,13 @@ public class Quad extends Geometry implements Primitive{
 
     private double area;
 
-    public Quad(Transform transform, Material material) {
+    public Quad(Transform3D transform, Material material) {
         super(transform, material);
         this.normalT = this.transform.localToGlobal(normal).normalize().toNormal();
         area = 4 * transform.localToGlobal(u).length() * transform.localToGlobal(v).length();
     }
 
-    public Quad(Transform transform) {
+    public Quad(Transform3D transform) {
         super(transform);
         this.normalT = transform.localToGlobal(normal).normalize().toNormal();
     }
@@ -61,7 +61,10 @@ public class Quad extends Geometry implements Primitive{
 
         if (isOnQuad(localPoint)) {
             Point3D globalPoint = ray.getPointAlongRay(t);
-            hitRecord.setIntersection(ray.getDirection().neg(),this,localPoint,globalPoint,normalT,t);
+            double u = 0.5 - 0.5 * localPoint.getX();
+            double v=  0.5 - 0.5 * localPoint.getZ();
+            Point2D uv = new Point2D(u,v);
+            hitRecord.setIntersection(ray.getDirection().neg(),this,localPoint,globalPoint,uv,normalT,t);
             return true;
         }
 
