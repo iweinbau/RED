@@ -193,23 +193,30 @@ public class RED {
 //		scene.addGeometry(s);
 
 //		// SPHERE DEMO
+		Transform2D T = new Transform2D();
+		T.scale(5);
+		T.translate(new Point2D(0.5,0.3));
+		T.rotate(45);
 		objT = new Transform3D();
-		objT.translate(new Point3D(0,-0.5,0));
-		Plane p1 = new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1)));
-		//scene.addGeometry(p1);
+		objT.translate(new Point3D(0,0,0));
+		Plane p1 = new Plane(objT,new Matte(new CheckerTexture(
+				new UVMap(T),
+				new Color(new RGBSpectrum(1,0.5,0)),
+				new Color(new RGBSpectrum(0.5,0,0))),new Constant(1)));
+		scene.addGeometry(p1);
 
 		objT = new Transform3D();
 		objT.scale(5);
 		//objT.rotateX(90);
-		Transform2D T = new Transform2D();
-		T.scale(10);
+		T = new Transform2D();
+		T.scale(20);
 		T.translate(new Point2D(0.5,0.3));
 		T.rotate(45);
 		Quad s = new Quad(objT,new Matte(new CheckerTexture(
 				new UVMap(T),
 				new Color(new RGBSpectrum(1,0.5,0)),
 				new Color(new RGBSpectrum(0.5,0,0))),new Constant(1)));
-		scene.addGeometry(s);
+		//scene.addGeometry(s);
 
 //		BVH bvh = new BVH(new Transform3D());
 //		objT = new Transform3D();
@@ -256,10 +263,10 @@ public class RED {
 		Quad lObjq = new Quad(lightT, emit);
 
 		//scene.addGeometry(lObjq);
-		scene.addLight(new AreaLight(lObjq, emit));
+		//scene.addLight(new AreaLight(lObjq, emit));
 
 		lightT = new Transform3D();
-		lightT.translate(new Point3D(2,2,3));
+		lightT.translate(new Point3D(2,3,3));
 		emit = new Emission(new RGBSpectrum(2));
 		Sphere lObjs = new Sphere(lightT,0.5,emit);
 
