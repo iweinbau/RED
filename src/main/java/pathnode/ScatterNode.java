@@ -22,8 +22,8 @@ public abstract class ScatterNode extends PathNode {
      */
     BxRDF bxRDF;
 
-    public ScatterNode(Point3D position, Point2D uv, Vector3D wo, Normal normal,PathNode parent) {
-        super(position,wo,parent);
+    public ScatterNode(Point3D position, Point3D localPoint, Point2D uv, Vector3D wo, Normal normal,PathNode parent) {
+        super(position, localPoint, wo, parent);
         this.normal = normal;
         this.uv = uv;
     }

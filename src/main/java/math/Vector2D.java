@@ -3,7 +3,7 @@ package math;
 import core.Constants;
 
 public class Vector2D extends Tuple<Double> {
-    public Vector2D(Double x, Double y) {
+    public Vector2D(double x, double y) {
         super(x, y);
     }
 

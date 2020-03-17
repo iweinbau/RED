@@ -11,7 +11,7 @@ public class CheckerTexture extends Texture<RGBSpectrum> {
     Texture<RGBSpectrum> texture1;
     Texture<RGBSpectrum> texture2;
 
-    TextureMap mapping;
+    TextureMap<Point2D> mapping;
 
     public CheckerTexture(TextureMap mapping, Texture<RGBSpectrum> texture1, Texture<RGBSpectrum> texture2) {
         this.texture1 = texture1;
@@ -22,7 +22,7 @@ public class CheckerTexture extends Texture<RGBSpectrum> {
     @Override
     public RGBSpectrum evaluate(ScatterNode scatterNode) {
         Point2D t = mapping.map(scatterNode);
-        if ( (int)(Math.floor(t.getX()) + Math.floor(t.getY())) % 2 == 0)
+        if ( (Math.floor(t.getX()) + Math.floor(t.getY())) % 2 == 0)
             return texture1.evaluate(scatterNode);
         else
             return texture2.evaluate(scatterNode);

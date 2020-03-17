@@ -117,7 +117,7 @@ public class HitRecord {
         if(!hit)
             return new BackgroundNode(direction,parent);
         else {
-            return new SurfaceNode(globalHit,uv,direction,normal,geometry,parent);
+            return new SurfaceNode(globalHit,localHit,uv,direction,normal,geometry,parent);
         }
     }
 

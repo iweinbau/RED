@@ -31,6 +31,12 @@ public abstract class PathNode{
     Point3D position;
 
     /**
+     *  Local position.
+     */
+
+    Point3D localPosition;
+
+    /**
      *
      */
     RGBSpectrum throughput;
@@ -51,8 +57,9 @@ public abstract class PathNode{
      *
      *
      */
-    public PathNode(Point3D position, Vector3D wo, PathNode parent) {
+    public PathNode(Point3D position, Point3D localPoint, Vector3D wo, PathNode parent) {
         this.position = position;
+        this.localPosition = localPoint;
         this.wo = wo;
         this.parent = parent;
         if(parent != null) {
@@ -112,5 +119,9 @@ public abstract class PathNode{
         if(other.position == null)
             return 0;
         return other.position.subtract(this.position).length();
+    }
+
+    public Point3D getLocalPoint() {
+        return localPosition;
     }
 }

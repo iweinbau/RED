@@ -7,7 +7,7 @@ import textures.texturemap.TextureMap;
 
 public class UVTexture extends Texture<RGBSpectrum> {
 
-    TextureMap mapping;
+    TextureMap<Point2D> mapping;
 
     public UVTexture(TextureMap mapping) {
         this.mapping = mapping;

@@ -2,11 +2,9 @@ package textures.texturemap;
 
 import math.Point2D;
 import math.Transform2D;
-import math.Transform3D;
 import pathnode.ScatterNode;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-public class UVMap extends TextureMap{
+public class UVMap extends TextureMap<Point2D> {
 
     public UVMap(Transform2D transform) {
         super(transform);

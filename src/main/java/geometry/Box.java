@@ -125,7 +125,7 @@ public class Box extends Geometry{
             }
             Point3D localHit = localRay.getPointAlongRay(tmin);
             Point3D globalHit = ray.getPointAlongRay(tmin);
-            hitRecord.setIntersection(ray.getDirection().neg(), this, localHit, globalHit,new Point2D(),
+            hitRecord.setIntersection(ray.getDirection().neg(), this, localHit, globalHit, new Point2D(),
                     transform.localToGlobal(normal),tmin);
             return true;
 

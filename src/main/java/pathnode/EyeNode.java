@@ -24,7 +24,7 @@ public class EyeNode extends PathNode {
     int width; int height;
 
     public EyeNode(Camera camera,int width, int height) {
-        super(camera.getPosition(),null,null);
+        super(camera.getPosition(), camera.getPosition(),null,null);
         this.camera = camera;
         this.width = width;
         this.height = height;

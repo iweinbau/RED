@@ -12,8 +12,8 @@ public class SurfaceNode extends ScatterNode {
 
     Geometry geometry;
 
-    public SurfaceNode(Point3D position, Point2D uv, Vector3D wo, Normal normal, Geometry geometry, PathNode parent) {
-        super(position,uv,wo,normal,parent);
+    public SurfaceNode(Point3D position, Point3D localPoint, Point2D uv, Vector3D wo, Normal normal, Geometry geometry, PathNode parent) {
+        super(position, localPoint, uv, wo, normal, parent);
         this.geometry = geometry;
         this.geometry.getMaterial().calculateBRDF(this);
     }
