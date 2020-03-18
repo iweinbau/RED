@@ -8,6 +8,7 @@ import math.Point3D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -36,7 +37,7 @@ public class OBJLoader extends MeshLoader {
     List<Integer> indices = new ArrayList<>();
 
     /**
-     * Constuct new OBJLoader object with given resource file.
+     * Construct new OBJLoader object with given resource file.
      * @param fileName
      */
     public OBJLoader(String fileName) {
@@ -88,12 +89,13 @@ public class OBJLoader extends MeshLoader {
                     if (line.startsWith("f ")) {
                         String[] face = line.split(" ");
 
-                        for (String vertex:triangulateFace(face)) {
-                            processVertex(vertex.split("/"));
+                        List<String> faces = new LinkedList<>(triangulateFace(face));
+                        for (int i = 0; i < faces.size(); i+=3) {
+                            processTriangle(
+                                    faces.get(i).split("/"),
+                                    faces.get(i+1).split("/"),
+                                    faces.get(i+2).split("/"));
                         }
-
-                        //TODO: check which type op face it is
-                        // v//vt, v/vn/vt, ...
 
                     }
 
@@ -117,8 +119,12 @@ public class OBJLoader extends MeshLoader {
 
         for (int i = 0; i < vertices.size(); i++) {
             verticesArray[i] = vertices.get(i).position;
-            normalsArray[i] = normals.get(vertices.get(i).normalIndex);
-            texturesArray[i] = uvs.get(vertices.get(i).uvIndex);
+            if (vertices.get(i).normalIndex == -1)
+                normalsArray[i] = normals.get(0);
+            else
+                normalsArray[i] = normals.get(vertices.get(i).normalIndex);
+            if (vertices.get(i).hasUv)
+                texturesArray[i] = uvs.get(vertices.get(i).uvIndex);
         }
 
         return new TriangleMesh(verticesArray,texturesArray,normalsArray,indicesArray);
@@ -140,21 +146,118 @@ public class OBJLoader extends MeshLoader {
         return vertices;
     }
 
-    private void processVertex(String[] vertex) {
-        int index = Integer.parseInt(vertex[0]) - 1;
-        Vertex currentVertex = vertices.get(index);
-        int uvIndex = Integer.parseInt(vertex[1]) - 1;
-        int normalIndex = Integer.parseInt(vertex[2]) - 1;
+    private void processTriangle(String[] vertex1, String[] vertex2, String[] vertex3) {
+        //TODO: check which type op face it is
+        // v//vn, v/vt/vn, v//
+        int index1 = Integer.parseInt(vertex1[0]) - 1;
+        Vertex v1 = vertices.get(index1);
+
+        int index2 = Integer.parseInt(vertex2[0]) - 1;
+        Vertex v2 = vertices.get(index2);
+
+        int index3 = Integer.parseInt(vertex3[0]) - 1;
+        Vertex v3 = vertices.get(index3);
+
+        /**
+         *
+         *
+         * Process v1
+         *
+         */
+        // Check if vertex has uvs.
+        int normalIndex;
+        if (vertex1[2].equals("")) {
+            // add new normal
+            normals.add(v2.position.subtract(v1.position)
+                    .cross(v3.position.subtract(v1.position)).normalize().toNormal());
+            normalIndex = normals.size() - 1;
+        } else {
+            normalIndex = Integer.parseInt(vertex1[2]) - 1;
+        }
+
+        int uvIndex = -1;
+        if (vertex1[1].equals("")) {
+            v1.setUv(false);
+        } else {
+            v1.setUv(true);
+            uvIndex = Integer.parseInt(vertex1[1]) - 1;
+        }
 
         // Current vertex is not set add new index.
-        if(!currentVertex.isSet()) {
-            currentVertex.setNormalIndex(normalIndex);
-            currentVertex.setUvIndex(uvIndex);
-            indices.add(index);
+        if(!v1.isSet()) {
+            v1.setNormalIndex(normalIndex);
+            v1.setUvIndex(uvIndex);
+            indices.add(index1);
         } else {
             // Current vertex is already set
-            processDuplicate(currentVertex, uvIndex, normalIndex);
+            processDuplicate(v1, uvIndex, normalIndex);
+        }
 
+        /**
+         *
+         * Process v2
+         *
+         */
+
+        if (vertex2[2].equals("")) {
+            // add new normal
+            normals.add(v2.position.subtract(v1.position)
+                    .cross(v3.position.subtract(v1.position)).normalize().toNormal());
+            normalIndex = normals.size() - 1;
+        } else {
+            normalIndex = Integer.parseInt(vertex2[2]) - 1;
+        }
+
+        // Check if vertex has uvs.
+        uvIndex = -1;
+        if (vertex2[1].equals("")) {
+            v2.setUv(false);
+        } else {
+            v2.setUv(true);
+            uvIndex = Integer.parseInt(vertex2[1]) - 1;
+        }
+
+        // Current vertex is not set add new index.
+        if(!v2.isSet()) {
+            v2.setNormalIndex(normalIndex);
+            v2.setUvIndex(uvIndex);
+            indices.add(index2);
+        } else {
+            // Current vertex is already set
+            processDuplicate(v2, uvIndex, normalIndex);
+        }
+
+        /**
+         *
+         * Process v3
+         */
+
+        if (vertex3[2].equals("")) {
+            // add new normal
+            normals.add(v2.position.subtract(v1.position)
+                    .cross(v3.position.subtract(v1.position)).normalize().toNormal());
+            normalIndex = normals.size() - 1;
+        } else {
+            normalIndex = Integer.parseInt(vertex3[2]) - 1;
+        }
+
+        // Check if vertex has uvs.
+        uvIndex = -1;
+        if (vertex3[1].equals("")) {
+            v3.setUv(false);
+        } else {
+            v3.setUv(true);
+            uvIndex = Integer.parseInt(vertex3[1]) - 1;
+        }
+
+        // Current vertex is not set add new index.
+        if(!v3.isSet()) {
+            v3.setNormalIndex(normalIndex);
+            v3.setUvIndex(uvIndex);
+            indices.add(index3);
+        } else {
+            // Current vertex is already set
+            processDuplicate(v3, uvIndex, normalIndex);
         }
     }
 

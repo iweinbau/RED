@@ -10,6 +10,8 @@ public class Vertex {
     int uvIndex = -1;
     Point3D position;
 
+    boolean hasUv = false;
+
     Vertex duplicate = null;
 
     public Vertex(Point3D point, int index) {
@@ -26,11 +28,11 @@ public class Vertex {
     }
 
     public boolean isSet() {
-        return normalIndex != -1 && uvIndex != -1;
+        return normalIndex != -1 && (uvIndex != -1 || !hasUv);
     }
 
     public boolean hasSameUv(int uvIndex) {
-        return this.uvIndex == uvIndex;
+        return this.uvIndex == uvIndex || !hasUv;
     }
 
     public boolean hasSameNormal(int normalIndex) {
@@ -43,5 +45,9 @@ public class Vertex {
 
     public void setDuplicate(Vertex duplicate) {
         this.duplicate = duplicate;
+    }
+
+    public void setUv(boolean b) {
+        hasUv = b;
     }
 }
