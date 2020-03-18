@@ -81,7 +81,7 @@ public class Sphere extends Geometry implements Primitive{
                 phi += 2*Constants.PI;
             double theta = Math.acos(Math.min(1,Math.max(localHit.getY()/radius,-1)));
             double u = phi * 0.5 * Constants.invPI;
-            double v = 1 - theta * Constants.invPI;
+            double v = theta * Constants.invPI;
             Point2D uv = new Point2D(u,v);
             Normal normal =  globalHit.subtract(transform.localToGlobal(new Point3D(0))).normalize().toNormal();
             hitRecord.setIntersection(ray.getDirection().neg(), this, localHit, globalHit, uv, normal,t);

@@ -8,6 +8,10 @@ import pathnode.EyeNode;
 
 public class PerspectiveCamera extends Camera{
 
+    double lensRadius;
+
+    double focalDistance;
+
     /**
      *
      * Construct new Perspective camera with a viewPlane distance of l.

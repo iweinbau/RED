@@ -1,6 +1,7 @@
 package integrator;
 
 import light.Light;
+import math.Point2D;
 import math.RGBSpectrum;
 import pathnode.EyeNode;
 import pathnode.ScatterNode;
@@ -31,15 +32,20 @@ public class DirectLightIntegrator extends Integrator {
     @Override
     public RGBSpectrum computeRadiance(EyeNode eyeNode, Scene scene, Sampler sampler) {
         RGBSpectrum L = RGBSpectrum.BLACK;
-        ScatterNode scatterNode = eyeNode.expand(scene,sampler.sample2D());
 
-        L = L.add(scatterNode.Le());
+        sampler.startNewPixel();
+        Point2D sample;
+        while ( (sample = sampler.nextPixelSample()) != null) {
+            ScatterNode scatterNode = eyeNode.expand(scene, sample);
 
-        if(scatterNode.isSurfaceNode()) {
-            L = L.add(directLights(scatterNode,scene,sampler));
-        }else {
-            for (Light light : scene.getLights()) {
-                L = L.add(light.Le(scatterNode.rayFormParent()));
+            L = L.add(scatterNode.Le());
+
+            if (scatterNode.isSurfaceNode()) {
+                L = L.add(directLights(scatterNode, scene, sampler));
+            } else {
+                for (Light light : scene.getLights()) {
+                    L = L.add(light.Le(scatterNode.rayFormParent()));
+                }
             }
         }
         return L;

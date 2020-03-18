@@ -41,6 +41,13 @@ public class TriangleMesh {
     private int numTris;
 
     /**
+     *
+     * Check if mesh has uv.
+     *
+     */
+    private boolean hasUv;
+
+    /**
      * Construct new triangle mesh from vertices, normals and indices.
      * @param vertices vertices array.
      * @param normals normals array.
@@ -51,6 +58,7 @@ public class TriangleMesh {
         this.normals = normals;
         this.indices = indices;
         this.uvs = uvs;
+        this.hasUv =  (uvs.length > 0 && uvs[0] != null) ? true : false;
         this.numVer = vertices.length;
         this.numTris = indices.length / 3;
     }
@@ -104,5 +112,9 @@ public class TriangleMesh {
      */
     public int getNumTriangles() {
         return this.numTris;
+    }
+
+    public boolean hasUv() {
+        return this.hasUv;
     }
 }

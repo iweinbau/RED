@@ -61,8 +61,8 @@ public class Quad extends Geometry implements Primitive{
 
         if (isOnQuad(localPoint)) {
             Point3D globalPoint = ray.getPointAlongRay(t);
-            double u = 0.5 - 0.5 * localPoint.getX();
-            double v=  0.5 - 0.5 * localPoint.getZ();
+            double u = 0.5 + 0.5 * localPoint.getX();
+            double v = 0.5 + 0.5 * localPoint.getZ();
             Point2D uv = new Point2D(u,v);
             hitRecord.setIntersection(ray.getDirection().neg(),this,localPoint,globalPoint,uv,normalT,t);
             return true;

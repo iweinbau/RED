@@ -77,6 +77,18 @@ public class FrameBuffer {
         pixels[height][width].add(color);
     }
 
+    /**
+     *
+     * Add RGB spectrum to the pixel at height height and width width.
+     *
+     * @param height height index of the pixel.
+     * @param width width index of the pixel.
+     * @param color the RGBSpectrum which will be added to the given pixel.
+     */
+    public void addPixel(int height, int width, RGBSpectrum color, int weight){
+        pixels[height][width].add(color,weight);
+    }
+
     public void addBufferWeight(double weight) {
         for (int i = 0; i < this.bufferHeight; i++){
             for (int j = 0; j < this.bufferWidth; j++){

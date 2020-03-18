@@ -6,6 +6,8 @@ import core.Ray;
 import material.Material;
 import math.*;
 
+import java.awt.geom.Arc2D;
+
 public class Plane extends Geometry {
 
     /**
@@ -52,7 +54,8 @@ public class Plane extends Geometry {
         if(t > Constants.kEps) {
             Point3D localPoint = localRay.getPointAlongRay(t);
             Point3D globalHitPoint = ray.getPointAlongRay(t);
-            Point2D uv = new Point2D(localPoint.getX(), localPoint.getZ());
+            Point2D uv = new Point2D(localPoint.getX() - Math.floor(localPoint.getX()),
+                    localPoint.getZ() - Math.floor(localPoint.getZ()));
             hitRecord.setIntersection(ray.getDirection().neg(),this,localPoint,globalHitPoint,uv,planeNormal,t);
             return true;
         }

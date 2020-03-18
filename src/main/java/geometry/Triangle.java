@@ -100,7 +100,11 @@ public class Triangle extends Geometry implements Primitive {
         Point2D uv;
         if(mesh != null) {
             normal = n0.scale(1 - gamma - beta).add(n1.scale(beta)).add(n2.scale(gamma)).normalize().toNormal();
-            uv = uv0.scale(1 - gamma - beta).add(uv1.scale(beta)).add(uv2.scale(gamma));
+            if (this.uv0 != null) {
+                uv = uv0.scale(1 - gamma - beta).add(uv1.scale(beta)).add(uv2.scale(gamma));
+            } else {
+                uv = new Point2D();
+            }
         }
         else {
             normal = n0;

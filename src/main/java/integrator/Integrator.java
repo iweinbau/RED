@@ -2,6 +2,7 @@ package integrator;
 
 import core.Sample;
 import light.Light;
+import math.Point2D;
 import math.RGBSpectrum;
 import math.Vector3D;
 import pathnode.EyeNode;

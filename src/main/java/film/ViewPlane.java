@@ -109,6 +109,17 @@ public class ViewPlane {
     }
 
     /**
+     * Add a RGBSpectrum to a pixel on the viewPlane
+     * @param height the height index of the pixel.
+     * @param width the width index of the pixel.
+     * @param color the RGBSpectrum of the pixel.
+     */
+    public void addColor(int height, int width, RGBSpectrum color, int weight){
+        buffer.addPixel(height,width,color,weight);
+    }
+
+
+    /**
      *
      * Add depth value to depth buffer.
      *

@@ -3,9 +3,11 @@ package renderer;
 import camera.Camera;
 import film.Tile;
 import integrator.Integrator;
+import math.Point2D;
 import math.RGBSpectrum;
 import pathnode.EyeNode;
-import sampler.Sampler;
+import sampler.Random;
+import sampler.Stratified;
 import scene.Scene;
 
 import java.io.IOException;
@@ -52,8 +54,6 @@ public class Renderer implements RenderEventInterface {
                 outerLoop:
                 for (int height = tile.yStart, i = 0; height < tile.yEnd; height++, i++) {
                     for (int width = tile.xStart,j =0; width < tile.xEnd; width++, j++) {
-                        for (int sample = 0; sample < samplesPerPixel; sample++) {
-
                             if (shouldStop) {
                                 break outerLoop;
                             }
@@ -64,11 +64,10 @@ public class Renderer implements RenderEventInterface {
                             // Once a path has been calculated we have to calculate radiance along it.
                             // eye radiance is the final value of the pixel.
                             RGBSpectrum L = integrator.computeRadiance(eye, scene,
-                                    new Sampler());
+                                    new Stratified(samplesPerPixel));
 
                             //TODO: test if L is valid!
-                            this.camera.getVp().addColor(height, width, L);
-                        }
+                            this.camera.getVp().addColor(height, width, L,samplesPerPixel);
                     }
                 }
 

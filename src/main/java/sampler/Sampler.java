@@ -7,24 +7,32 @@ import math.Point3D;
 import java.awt.*;
 import java.util.Random;
 
-public class Sampler {
+public abstract class Sampler {
+
+    int samplesPerPixel;
+
+    int sampleIndex;
 
     Random random;
 
-    public Sampler(long seed) {
+    public Sampler(int samplesPerPixel, long seed) {
         random = new Random(seed);
+        this.samplesPerPixel = samplesPerPixel;
     }
 
-    public Sampler() {
+    public Sampler(int samplesPerPixel) {
         random = new Random();
+        this.samplesPerPixel = samplesPerPixel;
     }
 
-    public double sample1D() {
-        return random.nextDouble();
-    }
+    public abstract double sample1D();
 
-    public Point2D sample2D() {
-        return new Point2D(random.nextDouble(),random.nextDouble());
+    public abstract Point2D sample2D();
+
+    public abstract Point2D nextPixelSample();
+
+    public void startNewPixel() {
+        sampleIndex = 0;
     }
 
     public static Point3D samplePointOnHemisphere(Point2D sample) {
