@@ -209,7 +209,7 @@ public class ViewPlane {
      * @throws IOException when error occurred during execution.
      */
     public void depthBufferToImage(String fileName) throws IOException {
-        this.depthBuffer.addBufferWeight(maxDepth);
+        this.depthBuffer.rgbToGrayMap(maxDepth);
         this.depthBuffer.writeBufferToImage(fileName,1, 1);
     }
 

@@ -41,7 +41,7 @@ public class AreaLight extends Light {
 
     @Override
     public RGBSpectrum Li(Vector3D wi) {
-        return primitive.Le(sample.getSampledPoint(),sample.getSampledNormal(),wi);
+        return I;
     }
 
     @Override

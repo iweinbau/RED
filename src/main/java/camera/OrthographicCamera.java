@@ -22,7 +22,7 @@ public class OrthographicCamera extends Camera {
     }
 
     @Override
-    public Vector3D viewDirection(Sample sample) {
+    public Ray getCameraRay(Sample sample) {
         throw new NotImplementedException();
     }
 }

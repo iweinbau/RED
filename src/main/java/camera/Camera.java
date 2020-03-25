@@ -121,11 +121,11 @@ public abstract class Camera {
 
     /**
      *
-     * Generate a new view direction.
+     * Generate a new view ray.
      * @param sample on the view plane.
-     * @return Vector3D
+     * @return Ray
      */
-    public  abstract Vector3D viewDirection(Sample sample);
+    public  abstract Ray getCameraRay(Sample sample);
 
     /**
      *

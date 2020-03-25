@@ -107,4 +107,12 @@ public class Ray {
             return this.origin;
         return origin.add(direction.scale(t));
     }
+
+    public void setDirection(Vector3D dir) {
+        this.direction = dir;
+    }
+
+    public void setOrigin(Point3D origin) {
+        this.origin = origin;
+    }
 }

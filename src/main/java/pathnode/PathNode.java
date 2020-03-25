@@ -77,7 +77,7 @@ public abstract class PathNode{
      */
     public abstract ScatterNode expand(Scene scene, Point2D sample);
 
-    public abstract ScatterNode trace(Scene scene,Vector3D direction);
+    public abstract ScatterNode trace(Scene scene,Ray ray);
 
     public abstract RGBSpectrum scatter(Vector3D direction);
 

@@ -195,6 +195,14 @@ public class FrameBuffer {
         }
     }
 
+    public void rgbToGrayMap(double maxDepth) {
+        for (int i = 0; i < this.bufferHeight; i++){
+            for (int j = 0; j < this.bufferWidth; j++){
+                pixels[i][j].setRgbColor(new RGBSpectrum(1).subtract(pixels[i][j].getSpectrum().scale(1./maxDepth)));
+            }
+        }
+    }
+
     public void rgbToHeatMap(int maxIntersections) {
         for (int i = 0; i < this.bufferHeight; i++){
             for (int j = 0; j < this.bufferWidth; j++){

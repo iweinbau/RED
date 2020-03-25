@@ -1,5 +1,6 @@
 package pathnode;
 
+import core.Ray;
 import math.Point2D;
 import math.RGBSpectrum;
 import math.Vector3D;
@@ -21,7 +22,7 @@ public class BackgroundNode extends ScatterNode {
     }
 
     @Override
-    public ScatterNode trace(Scene scene, Vector3D direction) {
+    public ScatterNode trace(Scene scene, Ray ray) {
         throw new NotImplementedException();
     }
 

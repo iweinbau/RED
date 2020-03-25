@@ -10,13 +10,21 @@ import textures.Texture;
 public class Emission extends Material {
 
     RGBSpectrum I;
+    double factor;
+
+    public Emission(RGBSpectrum I,double factor) {
+        this.I = I;
+        this.factor = factor;
+    }
 
     public Emission(RGBSpectrum I) {
         this.I = I;
+        this.factor = 1;
     }
 
+
     public RGBSpectrum getI() {
-        return I;
+        return I.scale(factor);
     }
 
     @Override

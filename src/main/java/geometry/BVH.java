@@ -14,12 +14,18 @@ public class BVH extends Composite{
 
     BVHNode root;
 
+    int maxObjectsAtLeaf = 1;
+
     public BVH(Transform3D transform) {
         super(transform);
     }
 
     public BVH(Transform3D transform, TriangleMesh mesh, Material material) {
         super(transform, mesh, material);
+    }
+    public BVH(Transform3D transform, TriangleMesh mesh, Material material, int maxObjectsAtLeaf) {
+        super(transform, mesh, material);
+        this.maxObjectsAtLeaf = maxObjectsAtLeaf;
     }
 
     public void buildAccelerationStructure() {
@@ -55,7 +61,7 @@ public class BVH extends Composite{
         }
 
         int numberOfGeometry = end - start;
-        if (numberOfGeometry <= 1) {
+        if (numberOfGeometry <= this.maxObjectsAtLeaf) {
             // Get offset in ordered geometry set.
             int first = orderedGeometry.size();
             // Add new geometry to the ordered set.

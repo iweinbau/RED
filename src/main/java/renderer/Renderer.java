@@ -8,6 +8,7 @@ import math.RGBSpectrum;
 import pathnode.EyeNode;
 import sampler.Random;
 import sampler.Stratified;
+import sampler.Uniform;
 import scene.Scene;
 
 import java.io.IOException;
@@ -30,6 +31,10 @@ public class Renderer implements RenderEventInterface {
     int samplesPerPixel;
 
     public Renderer(int samplesPerPixel) {
+        this.samplesPerPixel = samplesPerPixel;
+    }
+
+    public void setSamplesPerPixel(int samplesPerPixel) {
         this.samplesPerPixel = samplesPerPixel;
     }
 

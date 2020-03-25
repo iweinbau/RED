@@ -40,15 +40,17 @@ public class RED {
 	 * @throws InvocationTargetException
 	 */
 	public static void main(String[] arguments) {
-		int width = 400;
-		int height = 400;
+		int width = 800;
+		int height = 800;
 		double sensitivity = 1.0;
 		double gamma = 2.2;
 		boolean gui = true;
 		boolean quiet = false;
-		Point3D origin = new Point3D(-0.283894,-0.794405,5.13327);
-		Vector3D lookup = new Vector3D(0,1,0);
+		Point3D origin = new Point3D(-0.283894,-0.794405,4.53327);
 		Point3D destination = new Point3D(-0.9951571822166443,0.00454461295157671,-0.09819173067808151);
+		//Point3D origin = new Point3D(-4,4,3);
+		//Point3D destination = new Point3D(0,1,0);
+		Vector3D lookup = new Vector3D(0,1,0);
 		double fov = 90;
 		String filename = "output.png";
 
@@ -149,7 +151,7 @@ public class RED {
 		 * Initialize the camera and graphical user interface
 		 *********************************************************************/
 
-		final Renderer renderer = new Renderer(100);
+		final Renderer renderer = new Renderer(1000);
 
 		// initialize the progress reporter
 		final ProgressReporter reporter = new ProgressReporter("Rendering", 40,
@@ -174,7 +176,7 @@ public class RED {
 		 *********************************************************************/
 
 		final PerspectiveCamera camera = new PerspectiveCamera(origin,
-				destination,width,height,fov);
+				destination,width,height,fov,0.2,3);
 
 		final Scene scene = new Scene();
 
@@ -214,12 +216,46 @@ public class RED {
 		lightT.scale(new Vector3D(0.2,1,4));
 		lightT.rotateY(-30);
 		lightT.rotateX(180);
-		lightT.translate(new Point3D(1,3,0));
-		Emission emit = new Emission(new RGBSpectrum(0.8,1,1));
+		lightT.translate(new Point3D(-1,3,0));
+		Emission emit = new Emission(new RGBSpectrum(0.8,1,1),4);
 		Quad lObjq = new Quad(lightT, emit);
 
 		scene.addGeometry(lObjq);
 		scene.addLight(new AreaLight(lObjq, emit));
 
+//		scene.addGeometry(new Plane(new Transform3D(),new Matte(
+//				new Color(new RGBSpectrum(1)),
+//				new Constant(1))));
+//
+//		// red sphere
+//		Transform3D objT = new Transform3D();
+//		objT.translate(new Point3D(-2,1,0));
+//		scene.addGeometry(new Sphere(objT,new Matte(
+//				new Color(new RGBSpectrum(1,0,0)),
+//				new Constant(1))));
+//
+//
+//		// green sphere
+//		objT = new Transform3D();
+//		objT.translate(new Point3D(0,1,0));
+//		scene.addGeometry(new Sphere(objT,new Matte(
+//				new Color(new RGBSpectrum(0,1,0)),
+//				new Constant(1))));
+//
+//		// blue sphere
+//		objT = new Transform3D();
+//		objT.translate(new Point3D(2,1,0));
+//		scene.addGeometry(new Sphere(objT,new Matte(
+//				new Color(new RGBSpectrum(0,0,1)),
+//				new Constant(1))));
+//
+//		Transform3D lightT = new Transform3D();
+//		lightT.rotateX(100);
+//		lightT.translate(new Point3D(0,3,-4));
+//		Emission emission = new Emission(new RGBSpectrum(1));
+//		Quad quad = new Quad(lightT,emission);
+//
+//		scene.addGeometry(quad);
+//		scene.addLight(new AreaLight(quad,emission));
 	}
 }

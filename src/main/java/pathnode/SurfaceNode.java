@@ -1,5 +1,6 @@
 package pathnode;
 
+import core.Ray;
 import geometry.Geometry;
 import material.Emission;
 import math.*;
@@ -25,7 +26,7 @@ public class SurfaceNode extends ScatterNode {
     }
 
     @Override
-    public ScatterNode trace(Scene scene, Vector3D direction) {
+    public ScatterNode trace(Scene scene, Ray ray) {
         return null;
     }
 

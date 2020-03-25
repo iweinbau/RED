@@ -71,7 +71,7 @@ public class ProgressReporter implements RenderEventListener {
 	 * @param totalWork
 	 *            total amount of work which needs to be done.
 	 * @param quiet
-	 *            whether the progress reportershould print or not.
+	 *            whether the progress reporter should print or not.
 	 */
 	public ProgressReporter(String title, int barLength, int totalWork,
 			boolean quiet) {

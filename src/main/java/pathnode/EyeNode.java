@@ -36,14 +36,13 @@ public class EyeNode extends PathNode {
 
     @Override
     public ScatterNode expand(Scene scene, Point2D sample) {
-        this.successor = trace(scene,camera.viewDirection(sample(sample)));
+        this.successor = trace(scene,camera.getCameraRay(this.sample(sample)));
         this.successor.throughput = new RGBSpectrum(1);
         return this.successor;
     }
 
     @Override
-    public ScatterNode trace(Scene scene, Vector3D direction) {
-        Ray ray = new Ray(camera.getPosition(),direction);
+    public ScatterNode trace(Scene scene, Ray ray) {
         HitRecord hitRecord = scene.traceRay(ray);
         ScatterNode scatterNode = hitRecord.toScatterNode(this);
         camera.getVp().addNormal(height, width,scatterNode.normal);

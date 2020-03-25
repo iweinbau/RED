@@ -14,6 +14,10 @@ public class Random extends Sampler {
         super(samplesPerPixel);
     }
 
+    public Random() {
+        super(1);
+    }
+
     public double sample1D() {
         return random.nextDouble();
     }
