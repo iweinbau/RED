@@ -16,7 +16,7 @@ public class SpecularReflection extends BxRDF {
 
     @Override
     public RGBSpectrum rho() {
-        return RGBSpectrum.BLACK;
+        return cReflect;
     }
 
     @Override
@@ -36,7 +36,6 @@ public class SpecularReflection extends BxRDF {
 
     /**
      *
-     * Return the cosine reflection is independent of angle. So we add the cos(omega) here to cancel out.
      *
      * @param wo outgoing direction
      * @param wi incoming direction (the reflection vector)

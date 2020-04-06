@@ -15,10 +15,9 @@ public class EnvironmentLight extends Light {
      * Construct new light with given power.
      *
      * @param I         the light power.
-     * @param transform transformation of the light source.
      */
-    public EnvironmentLight(RGBSpectrum I, Transform3D transform) {
-        super(I, transform);
+    public EnvironmentLight(RGBSpectrum I) {
+        super(I, new Transform3D());
     }
 
     @Override
@@ -52,7 +51,7 @@ public class EnvironmentLight extends Light {
 
     @Override
     public RGBSpectrum scatter(Vector3D wi) {
-        return I;
+        return I.scale(1/Li_pdf());
     }
 
     @Override

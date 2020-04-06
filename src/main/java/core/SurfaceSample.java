@@ -4,7 +4,7 @@ import math.Normal;
 import math.Point3D;
 
 /**
- * Class for representing a sample on the a geometric surface.
+ * Class for representing a sample on a geometric surface.
  */
 public class SurfaceSample {
 

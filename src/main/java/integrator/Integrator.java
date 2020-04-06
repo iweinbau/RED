@@ -48,7 +48,7 @@ public abstract class Integrator {
                 L = L.add(
                         scatterNode.scatter(wi)
                         .multiply(light.scatter(wi.neg()))
-                        .scale(1./(scatterNode.pdf(wi) * light.Li_pdf() * light.distanceFactor(scatterNode.getPosition()))));
+                        .scale(1./light.distanceFactor(scatterNode.getPosition())));
             }
         }
         return L;

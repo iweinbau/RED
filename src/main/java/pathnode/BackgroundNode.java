@@ -45,4 +45,9 @@ public class BackgroundNode extends ScatterNode {
     public boolean isSurfaceNode() {
         return false;
     }
+
+    @Override
+    public RGBSpectrum scatter_f(Vector3D wi) {
+        throw new NotImplementedException();
+    }
 }

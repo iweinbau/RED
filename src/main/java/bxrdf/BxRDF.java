@@ -1,6 +1,8 @@
 package bxrdf;
 
+import core.Constants;
 import math.*;
+import sampler.Sampler;
 
 /**
  *
@@ -57,8 +59,7 @@ public abstract class BxRDF{
      * @param normal surface normal.
      * @return Returns bidirectional reflectance from fr(wi -> wo).
      */
-    public RGBSpectrum sample_f(Vector3D wo, Vector3D wi, Normal normal) {
-        return RGBSpectrum.BLACK;
+    public RGBSpectrum sample_f(Vector3D wo, Vector3D wi, Normal normal) { return f(wo,wi,normal);
     }
 
     /**
@@ -67,11 +68,18 @@ public abstract class BxRDF{
      *
      * @param wo Normalized outgoing direction
      * @param normal normal direction
-     * @param u sample point
+     * @param sample sample point
      * @return Returns sampled incoming direction wi.
      */
-    public Vector3D sample_wi(Vector3D wo, Normal normal, Point2D u) {
-        return new Vector3D(0);
+    public Vector3D sample_wi(Vector3D wo, Normal normal, Point2D sample) {
+        Vector3D v = new Vector3D(0.0034, 1, 0.0071).cross(normal);
+        v = v.normalize();
+        Vector3D u = v.cross(normal);
+
+        Point3D p = Sampler.samplePointOnHemisphere(sample);
+
+        Vector3D wi = u.scale(p.getX()).add(v .scale(p.getY())).add(normal.scale(p.getZ())).normalize();
+        return wi;
     }
 
     /**
@@ -84,6 +92,6 @@ public abstract class BxRDF{
      * @return probability density function.
      */
     public double pdf(Vector3D wo, Vector3D wi, Normal normal) {
-        return 1;
+        return normal.absDot(wi) * Constants.invPI;
     }
 }

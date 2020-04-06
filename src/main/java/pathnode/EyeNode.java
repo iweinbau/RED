@@ -38,6 +38,7 @@ public class EyeNode extends PathNode {
     public ScatterNode expand(Scene scene, Point2D sample) {
         this.successor = trace(scene,camera.getCameraRay(this.sample(sample)));
         this.successor.throughput = new RGBSpectrum(1);
+        this.successor.parent = this;
         return this.successor;
     }
 
@@ -53,6 +54,11 @@ public class EyeNode extends PathNode {
 
     @Override
     public RGBSpectrum scatter(Vector3D direction) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public RGBSpectrum scatter_f(Vector3D wi) {
         throw new NotImplementedException();
     }
 }

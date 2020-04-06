@@ -7,6 +7,7 @@ import math.Point2D;
 import math.RGBSpectrum;
 import pathnode.EyeNode;
 import sampler.Random;
+import sampler.Sampler;
 import sampler.Stratified;
 import sampler.Uniform;
 import scene.Scene;
@@ -56,6 +57,7 @@ public class Renderer implements RenderEventInterface {
 
             // create a thread which renders the specific tile
             Thread thread = new Thread( () -> {
+                Sampler sampler = new Stratified(samplesPerPixel);
                 outerLoop:
                 for (int height = tile.yStart, i = 0; height < tile.yEnd; height++, i++) {
                     for (int width = tile.xStart,j =0; width < tile.xEnd; width++, j++) {
@@ -69,7 +71,7 @@ public class Renderer implements RenderEventInterface {
                             // Once a path has been calculated we have to calculate radiance along it.
                             // eye radiance is the final value of the pixel.
                             RGBSpectrum L = integrator.computeRadiance(eye, scene,
-                                    new Stratified(samplesPerPixel));
+                                    sampler);
 
                             //TODO: test if L is valid!
                             this.camera.getVp().addColor(height, width, L,samplesPerPixel);

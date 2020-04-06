@@ -1,5 +1,6 @@
 package pathnode;
 
+import core.HitRecord;
 import core.Ray;
 import math.Point2D;
 import math.Point3D;
@@ -12,8 +13,6 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  * PathNode represent node in a path.
  */
 public abstract class PathNode{
-
-    static final double MAX_DEPTH = 5;
 
     /**
      * Path depth of this node
@@ -77,9 +76,15 @@ public abstract class PathNode{
      */
     public abstract ScatterNode expand(Scene scene, Point2D sample);
 
-    public abstract ScatterNode trace(Scene scene,Ray ray);
+    public ScatterNode trace(Scene scene,Ray ray) {
+        HitRecord hitRecord = scene.traceRay(ray);
+        ScatterNode scatterNode = hitRecord.toScatterNode(this);
+        return scatterNode;
+    }
 
     public abstract RGBSpectrum scatter(Vector3D direction);
+
+    public abstract RGBSpectrum scatter_f(Vector3D wi);
 
     /**
      *
@@ -123,5 +128,9 @@ public abstract class PathNode{
 
     public Point3D getLocalPoint() {
         return localPosition;
+    }
+
+    public RGBSpectrum getThroughput() {
+        return throughput;
     }
 }

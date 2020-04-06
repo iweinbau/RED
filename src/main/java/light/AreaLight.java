@@ -56,7 +56,7 @@ public class AreaLight extends Light {
 
     @Override
     public RGBSpectrum scatter(Vector3D wi) {
-        RGBSpectrum value = Li(wi).scale(this.sample.getSampledNormal().maxDot(wi));
+        RGBSpectrum value = Li(wi).scale(this.sample.getSampledNormal().maxDot(wi)/this.Li_pdf());
         return value;
     }
 
