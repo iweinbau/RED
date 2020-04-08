@@ -59,8 +59,7 @@ public abstract class BxRDF{
      * @param normal surface normal.
      * @return Returns bidirectional reflectance from fr(wi -> wo).
      */
-    public RGBSpectrum sample_f(Vector3D wo, Vector3D wi, Normal normal) { return f(wo,wi,normal);
-    }
+    public RGBSpectrum sample_f(Vector3D wo, Vector3D wi, Normal normal) { return f(wo,wi,normal);}
 
     /**
      *
@@ -91,7 +90,11 @@ public abstract class BxRDF{
      * @param normal surface normal.
      * @return probability density function.
      */
-    public double pdf(Vector3D wo, Vector3D wi, Normal normal) {
+    public double sample_pdf(Vector3D wo, Vector3D wi, Normal normal) {
         return normal.absDot(wi) * Constants.invPI;
+    }
+
+    public double pdf(Vector3D wo, Vector3D wi, Normal normal) {
+        return sample_pdf(wo,wi,normal);
     }
 }

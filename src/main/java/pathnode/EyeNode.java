@@ -10,6 +10,9 @@ import math.Vector3D;
 import scene.Scene;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.util.Collection;
+import java.util.List;
+
 /**
  *
  * EyeNode represent the first node in a path.
@@ -36,10 +39,13 @@ public class EyeNode extends PathNode {
 
     @Override
     public ScatterNode expand(Scene scene, Point2D sample) {
-        this.successor = trace(scene,camera.getCameraRay(this.sample(sample)));
-        this.successor.throughput = new RGBSpectrum(1);
-        this.successor.parent = this;
-        return this.successor;
+        ScatterNode scatterNode = trace(scene,camera.getCameraRay(this.sample(sample)));
+        this.successors.add(scatterNode);
+
+        scatterNode.throughput = new RGBSpectrum(1);
+        scatterNode.parent = this;
+
+        return scatterNode;
     }
 
     @Override

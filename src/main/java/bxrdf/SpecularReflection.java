@@ -26,7 +26,7 @@ public class SpecularReflection extends BxRDF {
 
     @Override
     public RGBSpectrum sample_f(Vector3D wo, Vector3D wi, Normal normal) {
-        return  cReflect.scale(1/normal.dot(wi));
+        return  cReflect;
     }
 
     @Override
@@ -40,10 +40,15 @@ public class SpecularReflection extends BxRDF {
      * @param wo outgoing direction
      * @param wi incoming direction (the reflection vector)
      * @param normal the normal vector.
-     * @return the pdf
+     * @return the sample_pdf cos(wi) to remove the cos dependency in the formula.
      */
     @Override
+    public double sample_pdf(Vector3D wo, Vector3D wi, Normal normal) {
+        return wi.absDot(normal);
+    }
+
+    @Override
     public double pdf(Vector3D wo, Vector3D wi, Normal normal) {
-        return 1;
+        return 0;
     }
 }

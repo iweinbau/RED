@@ -5,6 +5,11 @@ import geometry.Geometry;
 import material.Emission;
 import math.*;
 import scene.Scene;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Node at a the surface of geometry.
@@ -17,6 +22,7 @@ public class SurfaceNode extends ScatterNode {
         super(position, localPoint, uv, wo, normal, parent);
         this.geometry = geometry;
         this.geometry.getMaterial().calculateBRDF(this);
+
     }
 
     @Override
@@ -26,46 +32,46 @@ public class SurfaceNode extends ScatterNode {
             return null;
         Vector3D wi = bxRDF.sample_wi(wo,normal,sample);
         Ray ray = new Ray(this.position,wi);
-        ScatterNode next = trace(scene,ray);
-        next.parent = this;
-        this.successor = next;
+
+        ScatterNode scatterNode = trace(scene,ray);
+        successors.add(scatterNode);
+
+        scatterNode.parent = this;
         // expand node and update of next node, throughput: next.throughput = this.scatter;
-        next.throughput = this.scatter_f(wi);
-        return next;
+        scatterNode.throughput = this.scatter_f(wi);
+
+        return scatterNode;
     }
 
     @Override
     public double pdf(Vector3D wi) {
         if(bxRDF == null)
             return 1;
-        return bxRDF.pdf(wo,wi,normal);
+        return bxRDF.sample_pdf(wo,wi,normal);
     }
 
     @Override
     public RGBSpectrum scatter(Vector3D wi) {
         // If bxRDF is null this is a node on the light surface and has a zero contribution.
-        if(bxRDF == null)
+        if( bxRDF == null) {
             return RGBSpectrum.BLACK;
+        }
         return bxRDF.f(this.wo,wi,this.normal)
-                .scale(this.normal.maxDot(wi)/this.bxRDF.pdf(wo,wi,normal))
+                .scale(this.normal.maxDot(wi)/this.bxRDF.sample_pdf(wo,wi,normal))
                 .multiply(throughput);
     }
 
     @Override
     public RGBSpectrum scatter_f(Vector3D wi) {
         // If bxRDF is null this is a node on the light surface and has a zero contribution.
-        if(bxRDF == null)
-            return RGBSpectrum.BLACK;
         return bxRDF.sample_f(this.wo,wi,this.normal)
-                .scale(this.normal.maxDot(wi)/this.bxRDF.pdf(wo,wi,normal))
+                .scale(this.normal.maxDot(wi)/this.bxRDF.sample_pdf(this.wo,wi,this.normal))
                 .multiply(throughput);
     }
 
     @Override
     public RGBSpectrum Le() {
-        if (geometry.getMaterial() instanceof Emission)
-            return geometry.getMaterial().Le(position,normal,wo).multiply(this.throughput);
-        return RGBSpectrum.BLACK;
+        return geometry.getMaterial().Le(position,normal,wo).multiply(this.throughput);
     }
 
     @Override

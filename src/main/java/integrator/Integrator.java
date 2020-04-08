@@ -32,7 +32,7 @@ public abstract class Integrator {
 
     // TODO: add other way of sampling lights eg. sampleOneLight or sampleAllLights
     // By first picking a light using some distribution and after this sampling from the picked light.
-    // the pdf of of this will be P(k) * P(p|k) where k represent the light and p the point on light k.
+    // the sample_pdf of of this will be P(k) * P(p|k) where k represent the light and p the point on light k.
     public RGBSpectrum directLights(ScatterNode scatterNode,Scene scene, Sampler sampler) {
         RGBSpectrum L = RGBSpectrum.BLACK;
 
@@ -42,9 +42,6 @@ public abstract class Integrator {
             if(!light.getVisibility(scatterNode.getPosition()).isVisible(scene))
                 continue;
             else {
-                //TODO: take number of samples into account
-                //TODO: sample on area light surface.
-                //TODO: extract pdf from the scatter call for both scatter and light
                 L = L.add(
                         scatterNode.scatter(wi)
                         .multiply(light.scatter(wi.neg()))

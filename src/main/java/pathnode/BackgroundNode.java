@@ -7,6 +7,9 @@ import math.Vector3D;
 import scene.Scene;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.util.Collection;
+import java.util.List;
+
 /**
  * Node for paths disappearing into the background.
  */
@@ -50,4 +53,5 @@ public class BackgroundNode extends ScatterNode {
     public RGBSpectrum scatter_f(Vector3D wi) {
         throw new NotImplementedException();
     }
+
 }

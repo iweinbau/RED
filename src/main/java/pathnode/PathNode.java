@@ -9,6 +9,10 @@ import math.Vector3D;
 import scene.Scene;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * PathNode represent node in a path.
  */
@@ -50,7 +54,7 @@ public abstract class PathNode{
      *
      * Successor node, next node in path. null if no successor exist.
      */
-    ScatterNode successor;
+    List<ScatterNode> successors;
 
     /**
      *
@@ -61,6 +65,7 @@ public abstract class PathNode{
         this.localPosition = localPoint;
         this.wo = wo;
         this.parent = parent;
+        this.successors = new ArrayList<>();
         if(parent != null) {
             this.depth = parent.depth + 1;
         }
@@ -133,4 +138,9 @@ public abstract class PathNode{
     public RGBSpectrum getThroughput() {
         return throughput;
     }
+
+    public int getDepth() {
+        return this.depth;
+    }
+
 }

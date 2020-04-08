@@ -41,7 +41,7 @@ public class BxRDFContainer implements IBxRDF {
     }
 
     @Override
-    public double pdf(Vector3D wo, Vector3D wi,Normal normal) {
+    public double sample_pdf(Vector3D wo, Vector3D wi, Normal normal) {
         throw new NotImplementedException();
     }
 

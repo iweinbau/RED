@@ -6,6 +6,7 @@ import geometry.*;
 import gui.ProgressReporter;
 import gui.RenderFrame;
 import integrator.DirectLightIntegrator;
+import integrator.PathIntegrator;
 import integrator.PathTracer;
 import light.AreaLight;
 import light.EnvironmentLight;
@@ -42,8 +43,8 @@ public class RED {
 	 * @throws InvocationTargetException
 	 */
 	public static void main(String[] arguments) {
-		int width = 400;
-		int height = 400;
+		int width = 200;
+		int height = 200;
 		double sensitivity = 1.0;
 		double gamma = 2.2;
 		boolean gui = true;
@@ -153,7 +154,7 @@ public class RED {
 		 * Initialize the camera and graphical user interface
 		 *********************************************************************/
 
-		final Renderer renderer = new Renderer(100);
+		final Renderer renderer = new Renderer(1000);
 
 		// initialize the progress reporter
 		final ProgressReporter reporter = new ProgressReporter("Rendering", 40,
@@ -187,7 +188,7 @@ public class RED {
 
 		renderer.setScene(scene);
 		renderer.setCamera(camera);
-		renderer.setIntegrator(new PathTracer());
+		renderer.setIntegrator(new PathIntegrator());
 
 
 		Transform3D objT = new Transform3D();

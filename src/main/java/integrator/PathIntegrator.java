@@ -9,32 +9,27 @@ import sampler.Sampler;
 import scene.Scene;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-public class PathTracer extends Integrator {
+public class PathIntegrator extends Integrator {
 
     private final int MAX_DEPTH;
+
     private final int BRANCH_FACTOR;
 
-    public PathTracer(int maxDepth, int branchFactor) {
+    public PathIntegrator(int maxDepth, int branchFactor) {
         this.MAX_DEPTH = maxDepth;
         this.BRANCH_FACTOR = branchFactor;
     }
 
-    public PathTracer() {
-        this.MAX_DEPTH = 12;
-        this.BRANCH_FACTOR = 1;
+
+    public PathIntegrator() {
+        MAX_DEPTH = 14;
+        BRANCH_FACTOR = 1;
     }
 
-    /**
-     *
-     *
-     * Compute radiance along path starting from an eyeNode in a given scene.
-     * @param eyeNode starting node in path.
-     * @param scene scene to trace rays in.
-     * @return RGBSpectrum computed radiance.
-     */
     @Override
     public RGBSpectrum computeRadiance(EyeNode eyeNode, Scene scene, Sampler sampler) {
         RGBSpectrum L = RGBSpectrum.BLACK;
@@ -53,9 +48,6 @@ public class PathTracer extends Integrator {
 
                     // Add area light contribution.
                     L = L.add(scatterNode.Le());
-
-                    // Add direct light contribution
-                    L = L.add(directLights(scatterNode, scene, sampler));
 
                     // Expand path to new direction
                     if(scatterNode.getDepth() < MAX_DEPTH) {

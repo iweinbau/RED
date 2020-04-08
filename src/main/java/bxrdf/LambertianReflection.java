@@ -13,7 +13,7 @@ public class LambertianReflection extends BxRDF {
     RGBSpectrum cd;
 
     public LambertianReflection(RGBSpectrum cd) {
-        super(BxrdfType.BRDF_DIFFUSE.getFlag());
+        super(BxrdfType.BRDF_REFLECTION.getFlag() | BxrdfType.BRDF_DIFFUSE.getFlag());
         this.cd = cd;
     }
 
