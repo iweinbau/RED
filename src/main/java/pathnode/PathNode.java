@@ -1,5 +1,7 @@
 package pathnode;
 
+import bxrdf.BxRDF;
+import bxrdf.BxRDFContainer;
 import core.HitRecord;
 import core.Ray;
 import math.Point2D;
@@ -57,6 +59,11 @@ public abstract class PathNode{
     List<ScatterNode> successors;
 
     /**
+     * Bxrdf at surface, null if it is a background node
+     */
+    BxRDFContainer BSRDF;
+
+    /**
      *
      *
      */
@@ -66,6 +73,7 @@ public abstract class PathNode{
         this.wo = wo;
         this.parent = parent;
         this.successors = new ArrayList<>();
+        this.BSRDF = new BxRDFContainer();
         if(parent != null) {
             this.depth = parent.depth + 1;
         }
@@ -87,10 +95,6 @@ public abstract class PathNode{
         return scatterNode;
     }
 
-    public abstract RGBSpectrum scatter(Vector3D direction);
-
-    public abstract RGBSpectrum scatter_f(Vector3D wi);
-
     /**
      *
      *
@@ -103,7 +107,7 @@ public abstract class PathNode{
      * @return normalised direction.
      */
     public Vector3D directionTo(PathNode other) {
-        throw new NotImplementedException();
+        return other.position.subtract(this.position).normalize();
     }
 
     /**

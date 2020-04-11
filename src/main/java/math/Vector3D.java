@@ -135,6 +135,18 @@ public class Vector3D extends Triple<java.lang.Double>{
         return (this.neg().add(normal.scale(2 * normal.dot(this)))).normalize();
     }
 
+    public Vector3D refract(Normal normal, double eta) {
+        double cosThetaI = normal.dot(this);
+        double sin2ThetaI = Math.max(0,1 - cosThetaI * cosThetaI);
+        double sinThetaI = sin2ThetaI;
+
+        double cosThetaT = Math.sqrt( 1 - eta * eta * sin2ThetaI);
+        if (cosThetaT < 0)
+            return new Vector3D(0);
+
+        return this.neg().scale(eta).add(normal.scale(eta * cosThetaI - cosThetaT));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

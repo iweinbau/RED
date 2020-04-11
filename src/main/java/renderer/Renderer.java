@@ -53,7 +53,7 @@ public class Renderer implements RenderEventInterface {
         final ExecutorService service = Executors.newFixedThreadPool(Runtime
                 .getRuntime().availableProcessors());
 
-        for (Tile tile: this.camera.getVp().subdivide(20,20)) {
+        for (Tile tile: this.camera.getVp().subdivide(64,64)) {
 
             // create a thread which renders the specific tile
             Thread thread = new Thread( () -> {

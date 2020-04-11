@@ -108,7 +108,7 @@ public class HitRecord {
 
     /**
      *
-     * Transform3D hit record the a new scatter node.
+     * Transform3D hit record the a new scatterLight node.
      * If no hit occurred it returns a BackgroundNode else it returns a SurfaceNode.
      * @param parent origin node.
      * @return new ScatterNode.

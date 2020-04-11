@@ -1,8 +1,6 @@
 package integrator;
 
-import core.Sample;
 import light.Light;
-import math.Point2D;
 import math.RGBSpectrum;
 import math.Vector3D;
 import pathnode.EyeNode;
@@ -43,7 +41,7 @@ public abstract class Integrator {
                 continue;
             else {
                 L = L.add(
-                        scatterNode.scatter(wi)
+                        scatterNode.scatterLight(wi)
                         .multiply(light.scatter(wi.neg()))
                         .scale(1./light.distanceFactor(scatterNode.getPosition())));
             }

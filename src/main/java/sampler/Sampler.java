@@ -3,6 +3,7 @@ package sampler;
 import core.Constants;
 import math.Point2D;
 import math.Point3D;
+import math.Vector3D;
 
 import java.awt.*;
 import java.util.Random;
@@ -36,17 +37,13 @@ public abstract class Sampler {
     }
 
     public static Point3D samplePointOnHemisphere(Point2D sample) {
-
-        double cos_phi = Math.cos(2.0 * Constants.PI * sample.getX());
-        double sin_phi = Math.sin(2.0 * Constants.PI * sample.getX());
-        double cos_theta = (1.0 - sample.getY());
-        double sin_theta = Math.sqrt (1.0 - cos_theta * cos_theta);
-
-        double pu = sin_theta * cos_phi;
-        double pv = sin_theta * sin_phi;
-        double pw = cos_theta;
-
-        return new Point3D(pu,pv,pw);
+        double cos_theta = Math.sqrt(1.0 - sample.getX());
+		double sin_theta = Math.sqrt(sample.getX());
+		double phi = 2.0 * Constants.PI * sample.getY();
+        return new Point3D(
+                Math.cos(phi) * sin_theta,
+                Math.sin(phi) * sin_theta,
+                cos_theta);
     }
 
     public static Point3D samplePointOnUnitSphere(Point2D sample) {

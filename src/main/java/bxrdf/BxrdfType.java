@@ -6,13 +6,13 @@ import java.util.EnumSet;
 import java.util.Set;
 
 public enum BxrdfType {
-    BRDF_DIFFUSE(1<<0),
-    BRDF_SPECULAR(1<<2),
-    BRDF_REFLECTION(1<<3),
-    BRDF_TRANSMISSION(1<<4),
-    BRDF_ALL(BRDF_DIFFUSE.getFlag() |
-            BRDF_SPECULAR.getFlag() |
-            BRDF_TRANSMISSION.getFlag());
+    BSDF_REFLECTION (1 << 0),
+    BSDF_TRANSMISSION ( 1 << 1),
+    BSDF_DIFFUSE (1 << 2),
+    BSDF_GLOSSY ( 1 << 3),
+    BSDF_SPECULAR (1 << 4),
+    BSDF_ALL (BSDF_DIFFUSE.getFlag() | BSDF_GLOSSY.getFlag() | BSDF_SPECULAR.getFlag() |
+            BSDF_REFLECTION.getFlag() | BSDF_TRANSMISSION.getFlag());
 
     private final long flag;
 

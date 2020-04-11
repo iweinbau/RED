@@ -33,7 +33,7 @@ public class Matte extends Material {
     }
 
     /**
-     * Calculate BRDF at scatter node.
+     * Calculate BRDF at scatterLight node.
      * @param scatterNode
      */
     @Override

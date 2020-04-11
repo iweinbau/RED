@@ -23,7 +23,7 @@ public class PathTracer extends Integrator {
     }
 
     public PathTracer() {
-        this.MAX_DEPTH = 12;
+        this.MAX_DEPTH = 10;
         this.BRANCH_FACTOR = 1;
     }
 
@@ -42,35 +42,35 @@ public class PathTracer extends Integrator {
         sampler.startNewPixel();
         Point2D sample;
         while ( (sample = sampler.nextPixelSample()) != null) {
-            Queue<ScatterNode> nodesToExpand = new LinkedList<>();
-            nodesToExpand.add(eyeNode.expand(scene, sample));
-            while (!nodesToExpand.isEmpty()) {
+            ScatterNode scatterNode = eyeNode.expand(scene, sample);
 
-                ScatterNode scatterNode = nodesToExpand.poll();
+            for (int depth = 0; depth < MAX_DEPTH; depth++) {
 
                 // Check for surface node
                 if (scatterNode.isSurfaceNode()) {
 
-                    // Add area light contribution.
-                    L = L.add(scatterNode.Le());
+                    if (depth == 0 || scatterNode.isSpecularBounce()) {
+                        // Add area light contribution.
+                        L = L.add(scatterNode.Le());
+                    }
 
-                    // Add direct light contribution
+                    // Add direct light contributions
                     L = L.add(directLights(scatterNode, scene, sampler));
 
                     // Expand path to new direction
-                    if(scatterNode.getDepth() < MAX_DEPTH) {
-                        for (int i = 0; i < BRANCH_FACTOR; i++) {
-                            ScatterNode next = scatterNode.expand(scene, sampler.sample2D());
-                            if (next == null) {
-                                break;
-                            }
-                            nodesToExpand.add(next);
+                    scatterNode = scatterNode.expand(scene, sampler.sample2D());
+
+                    if (scatterNode == null) {
+                        break;
+                    }
+
+                } else {
+                    if (depth == 0 || scatterNode.isSpecularBounce()) {
+                        for (Light light : scene.getLights()) {
+                            L = L.add(light.Le(scatterNode.rayFormParent()).multiply(scatterNode.getThroughput()));
                         }
                     }
-                }else {
-                    for (Light light : scene.getLights()) {
-                        L = L.add(light.Le(scatterNode.rayFormParent()).multiply(scatterNode.getThroughput()));
-                    }
+                    break;
                 }
             }
         }

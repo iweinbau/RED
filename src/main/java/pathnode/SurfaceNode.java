@@ -1,5 +1,6 @@
 package pathnode;
 
+import bxrdf.BxrdfType;
 import core.Ray;
 import geometry.Geometry;
 import material.Emission;
@@ -28,50 +29,44 @@ public class SurfaceNode extends ScatterNode {
     @Override
     public ScatterNode expand(Scene scene, Point2D sample) {
         // bxRDF is null this node is on a light surface.
-        if (bxRDF == null)
+        if (BSRDF.numComponents() == 0)
             return null;
-        Vector3D wi = bxRDF.sample_wi(wo,normal,sample);
+        Vector3D wi = BSRDF.sample_wi(wo,normal,sample);
         Ray ray = new Ray(this.position,wi);
 
         ScatterNode scatterNode = trace(scene,ray);
         successors.add(scatterNode);
 
         scatterNode.parent = this;
-        // expand node and update of next node, throughput: next.throughput = this.scatter;
+        // expand node and update of next node, throughput: next.throughput = this.scatterLight;
         scatterNode.throughput = this.scatter_f(wi);
 
         return scatterNode;
     }
 
     @Override
-    public double pdf(Vector3D wi) {
-        if(bxRDF == null)
-            return 1;
-        return bxRDF.sample_pdf(wo,wi,normal);
-    }
-
-    @Override
-    public RGBSpectrum scatter(Vector3D wi) {
+    public RGBSpectrum scatterLight(Vector3D wi) {
         // If bxRDF is null this is a node on the light surface and has a zero contribution.
-        if( bxRDF == null) {
+        if( BSRDF.numComponents() == 0) {
             return RGBSpectrum.BLACK;
         }
-        return bxRDF.f(this.wo,wi,this.normal)
-                .scale(this.normal.maxDot(wi)/this.bxRDF.sample_pdf(wo,wi,normal))
-                .multiply(throughput);
+        return throughput.multiply(BSRDF.f(this.wo,wi,this.normal)
+                .scale(this.normal.absDot(wi)));
     }
 
     @Override
     public RGBSpectrum scatter_f(Vector3D wi) {
         // If bxRDF is null this is a node on the light surface and has a zero contribution.
-        return bxRDF.sample_f(this.wo,wi,this.normal)
-                .scale(this.normal.maxDot(wi)/this.bxRDF.sample_pdf(this.wo,wi,this.normal))
-                .multiply(throughput);
+        if( BSRDF.numComponents() == 0) {
+            return RGBSpectrum.BLACK;
+        }
+        return throughput.multiply(BSRDF.sample_f(this.wo,wi,this.normal)
+                .scale(this.normal.absDot(wi)/this.BSRDF.pdf(wo,wi,normal)));
     }
 
     @Override
     public RGBSpectrum Le() {
-        return geometry.getMaterial().Le(position,normal,wo).multiply(this.throughput);
+        return this.throughput.multiply(geometry.getMaterial().Le(position,normal,wo));
     }
 
     @Override

@@ -13,22 +13,14 @@ import java.util.List;
 
 public class BxRDFContainer implements IBxRDF {
 
-    List<BxRDF> bxRDFS = new LinkedList<>();
-    BxRDF sampledBRDF;
+    private List<BxRDF> bxRDFS = new LinkedList<>();
+
+    public BxRDF sampledBRDF;
 
     public BxRDFContainer() {}
 
     public void addBxRDF(BxRDF... bxrdf) {
         Collections.addAll(this.bxRDFS, bxrdf);
-    }
-
-    @Override
-    public RGBSpectrum rho() {
-        RGBSpectrum f = RGBSpectrum.BLACK;
-        for (BxRDF bxrdf:bxRDFS) {
-            f.add(bxrdf.rho());
-        }
-        return f;
     }
 
     @Override
@@ -40,28 +32,59 @@ public class BxRDFContainer implements IBxRDF {
         return f;
     }
 
+    /**
+     * PDF of all brdf's
+     *
+     * @param wo
+     * @param wi
+     * @param normal
+     * @return
+     */
     @Override
-    public double sample_pdf(Vector3D wo, Vector3D wi, Normal normal) {
-        throw new NotImplementedException();
+    public double pdf(Vector3D wo, Vector3D wi, Normal normal) {
+        assert(this.bxRDFS.size() > 0);
+
+        double pdf = sampledBRDF.sample_pdf(wo,wi,normal);
+        if ( (sampledBRDF.flag & BxrdfType.BSDF_SPECULAR.getFlag()) == 0 && this.bxRDFS.size() > 0) {
+            for (BxRDF bxrdf : this.bxRDFS) {
+                if (bxrdf != sampledBRDF) {
+                    pdf += bxrdf.pdf(wo, wi, normal);
+                }
+            }
+        }
+
+        return pdf/this.bxRDFS.size();
     }
 
     @Override
     public RGBSpectrum sample_f(Vector3D wo, Vector3D wi, Normal normal) {
-        throw new NotImplementedException();
-    }
+        assert (this.bxRDFS.size() > 0);
 
-    // Loop over all
-    @Override
-    public Vector3D sample_wi(Vector3D wo, Normal normal,Point2D u, long type) {
-        throw new NotImplementedException();
-    }
-
-    public List<BxRDF> getTypes(long types) {
-        List<BxRDF> returnBxRDF = new ArrayList<>();
-        for (BxRDF bxrdf:this.bxRDFS) {
-            if(bxrdf.isOfType(types))
-                returnBxRDF.add(bxrdf);
+        RGBSpectrum f = sampledBRDF.sample_f(wo,wi,normal);
+        if ( (sampledBRDF.flag & BxrdfType.BSDF_SPECULAR.getFlag()) == 0 && this.bxRDFS.size() > 0) {
+            f = RGBSpectrum.BLACK;
+            for (BxRDF bxrdf : this.bxRDFS) {
+                boolean reflect = wi.dot(normal) * wo.dot(normal) > 0;
+                if ( (reflect && (bxrdf.flag & BxrdfType.BSDF_REFLECTION.getFlag()) != 0) ||
+                        (!reflect && (bxrdf.flag & BxrdfType.BSDF_TRANSMISSION.getFlag()) != 0) ) {
+                    f = f.add(bxrdf.f(wo, wi, normal));
+                }
+            }
         }
-        return returnBxRDF;
+        return f;
+    }
+
+    @Override
+    public Vector3D sample_wi(Vector3D wo, Normal normal,Point2D u) {
+        // 1. pick a random brdf.
+        int bsdfIndex = Math.min((int)Math.floor(u.getX() * this.bxRDFS.size()), this.bxRDFS.size() - 1);
+        sampledBRDF = this.bxRDFS.get(bsdfIndex);
+
+        // 2. sample direction for this brdf.
+        return sampledBRDF.sample_wi(wo,normal,u);
+    }
+
+    public int numComponents() {
+        return this.bxRDFS.size();
     }
 }

@@ -37,9 +37,6 @@ public abstract class BxRDF{
         return (this.flag & flag) == this.flag;
     }
 
-
-    public abstract RGBSpectrum rho();
-
     /**
      *
      * Used for sampling direct light contributions
@@ -71,30 +68,35 @@ public abstract class BxRDF{
      * @return Returns sampled incoming direction wi.
      */
     public Vector3D sample_wi(Vector3D wo, Normal normal, Point2D sample) {
-        Vector3D v = new Vector3D(0.0034, 1, 0.0071).cross(normal);
-        v = v.normalize();
-        Vector3D u = v.cross(normal);
+        Vector3D w = normal.dot(wo) > 0 ? normal : normal.neg();
+        Vector3D u = ((Math.abs(w.getX()) > Constants.kEps ?
+                new Vector3D(0.0, 1.0, 0.0) :
+                new Vector3D(1.0, 0.0, 0.0)).cross(w)).normalize();
+        Vector3D v = w.cross(u);
 
         Point3D p = Sampler.samplePointOnHemisphere(sample);
 
-        Vector3D wi = u.scale(p.getX()).add(v .scale(p.getY())).add(normal.scale(p.getZ())).normalize();
-        return wi;
+        Vector3D wi = u.scale(p.getX()).add(v .scale(p.getY())).add(w.scale(p.getZ()));
+        return wi.normalize();
     }
 
     /**
      *
      * Gives the probability density function of the outgoing and incoming direction with respect to the given normal.
      *
+     * Used for in scattering function. This is actually the pdf belonging to sample_wi. Eg, for perfect is this cos(w_i)
+     * to remove the cos dependency in the LTE.
+     *
      * @param wo Normalized outgoing direction.
      * @param wi Normalized incoming direction.
      * @param normal surface normal.
-     * @return probability density function.
+     * @return probability density function belonging to sample_wi
      */
     public double sample_pdf(Vector3D wo, Vector3D wi, Normal normal) {
-        return normal.absDot(wi) * Constants.invPI;
+        return this.pdf(wo,wi,normal);
     }
 
     public double pdf(Vector3D wo, Vector3D wi, Normal normal) {
-        return sample_pdf(wo,wi,normal);
+        return normal.absDot(wi) * Constants.invPI;
     }
 }

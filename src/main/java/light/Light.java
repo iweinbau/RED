@@ -62,8 +62,8 @@ public abstract class Light {
 
     /**
      * Scatter light in a given direction
-     * @param wi the direction in which to scatter light.
-     * @return RGBSpectrum fraction of light scatter into wi.
+     * @param wi the direction in which to scatterLight light.
+     * @return RGBSpectrum fraction of light scatterLight into wi.
      */
     public abstract RGBSpectrum scatter(Vector3D wi);
 

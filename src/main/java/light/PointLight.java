@@ -39,7 +39,7 @@ public class PointLight extends Light{
 
     /**
      *
-     * @param wi the direction in which to scatter light.
+     * @param wi the direction in which to scatterLight light.
      * @return RGBSpectrum
      */
     @Override

@@ -1,6 +1,7 @@
 package pathnode;
 
 import bxrdf.BxRDF;
+import bxrdf.BxrdfType;
 import math.*;
 
 /**
@@ -17,11 +18,6 @@ public abstract class ScatterNode extends PathNode {
 
     Point2D uv;
 
-    /**
-     * Bxrdf at surface, null if it is a background node
-     */
-    BxRDF bxRDF;
-
     public ScatterNode(Point3D position, Point3D localPoint, Point2D uv, Vector3D wo, Normal normal,PathNode parent) {
         super(position, localPoint, wo, parent);
         this.normal = normal;
@@ -32,13 +28,24 @@ public abstract class ScatterNode extends PathNode {
         return this.uv;
     }
 
-    public abstract RGBSpectrum Le();
+    public abstract RGBSpectrum scatterLight(Vector3D direction);
 
-    public abstract double pdf(Vector3D wi);
+    public abstract RGBSpectrum scatter_f(Vector3D wi);
+
+    public abstract RGBSpectrum Le();
 
     public abstract boolean isSurfaceNode();
 
     public void setBxRDF(BxRDF bxRDF) {
-        this.bxRDF = bxRDF;
+        this.BSRDF.addBxRDF(bxRDF);
+    }
+
+    public boolean isSpecularBounce() {
+        if (this.parent.BSRDF.numComponents() <= 0 || this.parent.BSRDF.sampledBRDF == null)
+            return false;
+        return this.parent.BSRDF.sampledBRDF
+                .isOfType(BxrdfType.BSDF_REFLECTION.getFlag() | BxrdfType.BSDF_SPECULAR.getFlag()) ||
+                this.parent.BSRDF.sampledBRDF
+                        .isOfType(BxrdfType.BSDF_TRANSMISSION.getFlag() | BxrdfType.BSDF_SPECULAR.getFlag());
     }
 }

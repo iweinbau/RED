@@ -39,6 +39,10 @@ public abstract class Triple<T> {
         }
     }
 
+    public boolean isZero() {
+        return this.x.equals(0) && this.y.equals(0) && this.z.equals(0);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

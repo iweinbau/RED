@@ -8,11 +8,6 @@ import pathnode.ScatterNode;
 import sampler.Sampler;
 import scene.Scene;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
-
 public class PathIntegrator extends Integrator {
 
     private final int MAX_DEPTH;
@@ -37,11 +32,9 @@ public class PathIntegrator extends Integrator {
         sampler.startNewPixel();
         Point2D sample;
         while ( (sample = sampler.nextPixelSample()) != null) {
-            Queue<ScatterNode> nodesToExpand = new LinkedList<>();
-            nodesToExpand.add(eyeNode.expand(scene, sample));
-            while (!nodesToExpand.isEmpty()) {
+            ScatterNode scatterNode = eyeNode.expand(scene, sample);
 
-                ScatterNode scatterNode = nodesToExpand.poll();
+            for (int depth = 0; depth < MAX_DEPTH; depth++) {
 
                 // Check for surface node
                 if (scatterNode.isSurfaceNode()) {
@@ -50,19 +43,15 @@ public class PathIntegrator extends Integrator {
                     L = L.add(scatterNode.Le());
 
                     // Expand path to new direction
-                    if(scatterNode.getDepth() < MAX_DEPTH) {
-                        for (int i = 0; i < BRANCH_FACTOR; i++) {
-                            ScatterNode next = scatterNode.expand(scene, sampler.sample2D());
-                            if (next == null) {
-                                break;
-                            }
-                            nodesToExpand.add(next);
-                        }
+                    scatterNode = scatterNode.expand(scene,sampler.sample2D());
+                    if(scatterNode == null) {
+                        break;
                     }
                 }else {
                     for (Light light : scene.getLights()) {
                         L = L.add(light.Le(scatterNode.rayFormParent()).multiply(scatterNode.getThroughput()));
                     }
+                    break;
                 }
             }
         }

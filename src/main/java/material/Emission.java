@@ -34,7 +34,7 @@ public class Emission extends Material {
 
     @Override
     public RGBSpectrum Le(Point3D point, Normal normal, Vector3D wi) {
-        return normal.dot(wi) > 0 ?  I : new RGBSpectrum(0);
+        return normal.dot(wi) > 0 ?  getI() : new RGBSpectrum(0);
     }
 
     @Override

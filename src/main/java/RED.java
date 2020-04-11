@@ -12,6 +12,7 @@ import light.AreaLight;
 import light.EnvironmentLight;
 import light.PointLight;
 import material.Emission;
+import material.Glass;
 import material.Matte;
 import material.Mirror;
 import math.*;
@@ -52,7 +53,7 @@ public class RED {
 		//Point3D origin = new Point3D(-0.283894,-0.794405,4.53327);
 		//Point3D destination = new Point3D(-0.9951571822166443,0.00454461295157671,-0.09819173067808151);
 		Point3D origin = new Point3D(0,2.5,4);
-		Point3D destination = new Point3D(0,2.5,0);
+		Point3D destination = new Point3D(0,2,0);
 		Vector3D lookup = new Vector3D(0,1,0);
 		double fov = 90;
 		String filename = "output.png";
@@ -154,7 +155,7 @@ public class RED {
 		 * Initialize the camera and graphical user interface
 		 *********************************************************************/
 
-		final Renderer renderer = new Renderer(1000);
+		final Renderer renderer = new Renderer(10);
 
 		// initialize the progress reporter
 		final ProgressReporter reporter = new ProgressReporter("Rendering", 40,
@@ -188,7 +189,7 @@ public class RED {
 
 		renderer.setScene(scene);
 		renderer.setCamera(camera);
-		renderer.setIntegrator(new PathIntegrator());
+		renderer.setIntegrator(new PathTracer());
 
 
 		Transform3D objT = new Transform3D();
@@ -301,28 +302,36 @@ public class RED {
 		objT.translate(new Point3D(0,0,-2));
 		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1))));
 
+		// Front white wall
+		objT = new Transform3D();
+		objT.rotateX(90);
+		objT.translate(new Point3D(0,0,5));
+		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1))));
+
 		// RIGHT green wall
 		objT = new Transform3D();
 		objT.rotateZ(90);
 		objT.translate(new Point3D(3,0,0));
-		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(0,1,0)),new Constant(1))));
+		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1))));
 
 		// LEFT red wall
 		objT = new Transform3D();
 		objT.rotateZ(-90);
 		objT.translate(new Point3D(-3,0,0));
-		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1))));
+		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1))));
 
-		// MIROR SPHERE
+		// MIRROR SPHERE
 		objT= new Transform3D();
 		objT.translate(new Point3D(0,2,0));
-		scene.addGeometry(new Sphere(objT,new Mirror(new Color(new RGBSpectrum(1)))));
+		//scene.addGeometry(new Sphere(objT,
+		//		new Glass(new Color(new RGBSpectrum(1)),new Color(new RGBSpectrum(1)),new Constant(1.6))));
 
 		lightT  = new Transform3D();
+		lightT.translate(new Point3D(0,0,-1));
 		lightT.scale(new Vector3D(1));
 		lightT.rotateX(180);
 		lightT.translate(new Point3D(0,4.9999,0));
-		Emission emit = new Emission(new RGBSpectrum(1,1,1),1);
+		Emission emit = new Emission(new RGBSpectrum(1),5);
 		Quad lObjq = new Quad(lightT, emit);
 
 		scene.addGeometry(lObjq);

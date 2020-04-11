@@ -1,5 +1,6 @@
 package bxrdf;
 
+import bxrdf.fresnel.Fresnel;
 import math.Normal;
 import math.Point2D;
 import math.RGBSpectrum;
@@ -8,15 +9,12 @@ import math.Vector3D;
 public class SpecularReflection extends BxRDF {
 
     RGBSpectrum cReflect;
+    Fresnel fresnel;
 
-    public SpecularReflection(RGBSpectrum cReflect) {
-        super(BxrdfType.BRDF_REFLECTION.getFlag() | BxrdfType.BRDF_SPECULAR.getFlag());
+    public SpecularReflection(RGBSpectrum cReflect, Fresnel fresnel) {
+        super(BxrdfType.BSDF_REFLECTION.getFlag() | BxrdfType.BSDF_SPECULAR.getFlag());
         this.cReflect = cReflect;
-    }
-
-    @Override
-    public RGBSpectrum rho() {
-        return cReflect;
+        this.fresnel = fresnel;
     }
 
     @Override
@@ -26,7 +24,7 @@ public class SpecularReflection extends BxRDF {
 
     @Override
     public RGBSpectrum sample_f(Vector3D wo, Vector3D wi, Normal normal) {
-        return  cReflect;
+        return  cReflect.scale(fresnel.eval(normal.dot(wi))/normal.absDot(wi));
     }
 
     @Override
@@ -40,11 +38,11 @@ public class SpecularReflection extends BxRDF {
      * @param wo outgoing direction
      * @param wi incoming direction (the reflection vector)
      * @param normal the normal vector.
-     * @return the sample_pdf cos(wi) to remove the cos dependency in the formula.
+     * @return the sample_pdf cos(wi) to remove the cos dependency in LTE.
      */
     @Override
     public double sample_pdf(Vector3D wo, Vector3D wi, Normal normal) {
-        return wi.absDot(normal);
+        return 1;
     }
 
     @Override

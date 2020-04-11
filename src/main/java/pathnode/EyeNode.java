@@ -58,13 +58,4 @@ public class EyeNode extends PathNode {
         return scatterNode;
     }
 
-    @Override
-    public RGBSpectrum scatter(Vector3D direction) {
-        throw new NotImplementedException();
-    }
-
-    @Override
-    public RGBSpectrum scatter_f(Vector3D wi) {
-        throw new NotImplementedException();
-    }
 }

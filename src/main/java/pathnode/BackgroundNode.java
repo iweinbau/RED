@@ -1,5 +1,6 @@
 package pathnode;
 
+import bxrdf.BxrdfType;
 import core.Ray;
 import math.Point2D;
 import math.RGBSpectrum;
@@ -30,18 +31,13 @@ public class BackgroundNode extends ScatterNode {
     }
 
     @Override
-    public RGBSpectrum scatter(Vector3D direction) {
+    public RGBSpectrum scatterLight(Vector3D direction) {
         throw new NotImplementedException();
     }
 
     @Override
     public RGBSpectrum Le() {
         return RGBSpectrum.BLACK;
-    }
-
-    @Override
-    public double pdf(Vector3D wi) {
-        return 1;
     }
 
     @Override
