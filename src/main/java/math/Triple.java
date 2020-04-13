@@ -1,8 +1,9 @@
 package math;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public abstract class Triple<T> {
+public abstract class Triple<T extends Serializable> implements Serializable {
 
     final T x;
     final T y;

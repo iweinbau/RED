@@ -8,6 +8,7 @@ import java.awt.image.DataBufferInt;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 
 /**
  * Class representing collection of pixel values.
@@ -25,7 +26,7 @@ public class FrameBuffer {
     /**
      * FrameBuffer pixel values.
      */
-    private final Pixel[][] pixels;
+    private Pixel[][] pixels;
 
     /**
      *
@@ -210,5 +211,18 @@ public class FrameBuffer {
                         RGBSpectrum.intToHeatMap(pixels[i][j].getSpectrum().get(0),maxIntersections));
             }
         }
+    }
+
+    public void addTileToBuffer(int startX, int startY, int endX, int endY, Pixel[] buffer) {
+        int k = 0;
+        for (int i = startY; i < endY; i++) {
+            for (int j = startX; j < endX; j++) {
+                pixels[i][j] = buffer[k++];
+            }
+        }
+    }
+
+    public Pixel[][] getPixels() {
+        return this.pixels;
     }
 }

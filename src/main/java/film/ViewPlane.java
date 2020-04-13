@@ -98,6 +98,11 @@ public class ViewPlane {
     public ViewPlane(int horizontalResolution, int verticalResolution, double viewPlaneDist) {
     }
 
+    public ViewPlane(int horizontalRes, int verticalRes) {
+        this.horizontalRes = horizontalRes;
+        this.verticalRes = verticalRes;
+    }
+
     /**
      * Add a RGBSpectrum to a pixel on the viewPlane
      * @param height the height index of the pixel.
@@ -302,4 +307,7 @@ public class ViewPlane {
         this.intersectionBuffer.clear();
     }
 
+    public Tile getTile() {
+        return new Tile(0,0,verticalRes,horizontalRes);
+    }
 }

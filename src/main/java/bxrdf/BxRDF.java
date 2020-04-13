@@ -16,7 +16,7 @@ public abstract class BxRDF{
      * BxRDF flag, indicate which type of bxrdf it represent.
      *
      */
-    final long flag;
+    public final long flag;
 
     /**
      *
@@ -68,11 +68,10 @@ public abstract class BxRDF{
      * @return Returns sampled incoming direction wi.
      */
     public Vector3D sample_wi(Vector3D wo, Normal normal, Point2D sample) {
-        Vector3D w = normal.dot(wo) > 0 ? normal : normal.neg();
-        Vector3D u = ((Math.abs(w.getX()) > Constants.kEps ?
-                new Vector3D(0.0, 1.0, 0.0) :
-                new Vector3D(1.0, 0.0, 0.0)).cross(w)).normalize();
-        Vector3D v = w.cross(u);
+        Vector3D w = normal;
+        Vector3D v = new Vector3D(0.0034, 1, 0.0071).cross(w);
+        v = v.normalize();
+        Vector3D u = v.cross(w);
 
         Point3D p = Sampler.samplePointOnHemisphere(sample);
 

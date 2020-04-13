@@ -47,6 +47,7 @@ public class PathIntegrator extends Integrator {
                     if(scatterNode == null) {
                         break;
                     }
+
                 }else {
                     for (Light light : scene.getLights()) {
                         L = L.add(light.Le(scatterNode.rayFormParent()).multiply(scatterNode.getThroughput()));

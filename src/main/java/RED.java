@@ -155,7 +155,7 @@ public class RED {
 		 * Initialize the camera and graphical user interface
 		 *********************************************************************/
 
-		final Renderer renderer = new Renderer(10);
+		final Renderer renderer = new Renderer(50);
 
 		// initialize the progress reporter
 		final ProgressReporter reporter = new ProgressReporter("Rendering", 40,
@@ -312,25 +312,24 @@ public class RED {
 		objT = new Transform3D();
 		objT.rotateZ(90);
 		objT.translate(new Point3D(3,0,0));
-		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1))));
+		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(0,1,0)),new Constant(1))));
 
 		// LEFT red wall
 		objT = new Transform3D();
 		objT.rotateZ(-90);
 		objT.translate(new Point3D(-3,0,0));
-		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1))));
+		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1))));
 
 		// MIRROR SPHERE
 		objT= new Transform3D();
-		objT.translate(new Point3D(0,2,0));
-		//scene.addGeometry(new Sphere(objT,
-		//		new Glass(new Color(new RGBSpectrum(1)),new Color(new RGBSpectrum(1)),new Constant(1.6))));
+		objT.translate(new Point3D(-1,2,0));
+		scene.addGeometry(new Sphere(objT,
+				new Glass(new Color(new RGBSpectrum(1)),new Color(new RGBSpectrum(1)),new Constant(1.5))));
 
 		lightT  = new Transform3D();
-		lightT.translate(new Point3D(0,0,-1));
 		lightT.scale(new Vector3D(1));
 		lightT.rotateX(180);
-		lightT.translate(new Point3D(0,4.9999,0));
+		lightT.translate(new Point3D(0,4.9999,1));
 		Emission emit = new Emission(new RGBSpectrum(1),5);
 		Quad lObjq = new Quad(lightT, emit);
 

@@ -8,10 +8,6 @@ import pathnode.ScatterNode;
 import sampler.Sampler;
 import scene.Scene;
 
-import java.util.LinkedList;
-import java.util.PriorityQueue;
-import java.util.Queue;
-
 public class PathTracer extends Integrator {
 
     private final int MAX_DEPTH;
@@ -23,7 +19,7 @@ public class PathTracer extends Integrator {
     }
 
     public PathTracer() {
-        this.MAX_DEPTH = 10;
+        this.MAX_DEPTH = 12;
         this.BRANCH_FACTOR = 1;
     }
 

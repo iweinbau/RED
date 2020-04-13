@@ -144,7 +144,7 @@ public class Vector3D extends Triple<java.lang.Double>{
         if (cosThetaT < 0)
             return new Vector3D(0);
 
-        return this.neg().scale(eta).add(normal.scale(eta * cosThetaI - cosThetaT));
+        return (this.neg().scale(eta).add(normal.scale(eta * cosThetaI - cosThetaT))).normalize();
     }
 
     @Override

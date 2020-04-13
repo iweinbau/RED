@@ -43,9 +43,10 @@ public abstract class ScatterNode extends PathNode {
     public boolean isSpecularBounce() {
         if (this.parent.BSRDF.numComponents() <= 0 || this.parent.BSRDF.sampledBRDF == null)
             return false;
-        return this.parent.BSRDF.sampledBRDF
-                .isOfType(BxrdfType.BSDF_REFLECTION.getFlag() | BxrdfType.BSDF_SPECULAR.getFlag()) ||
-                this.parent.BSRDF.sampledBRDF
-                        .isOfType(BxrdfType.BSDF_TRANSMISSION.getFlag() | BxrdfType.BSDF_SPECULAR.getFlag());
+        return (this.parent.BSRDF.sampledBRDF.flag & BxrdfType.BSDF_SPECULAR.getFlag()) != 0;
+    }
+
+    public Normal getNormal() {
+        return this.normal;
     }
 }

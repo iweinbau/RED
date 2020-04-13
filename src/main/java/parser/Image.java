@@ -19,8 +19,8 @@ public class Image {
     }
 
     public RGBSpectrum lookUp(Point2D uv) {
-        int x = (int) Math.floor((uv.getX()-Math.floor(uv.getX())) * (imageWidth-1));
-        int y = (int) Math.floor((uv.getY()-Math.floor(uv.getY())) * (imageHeight-1));
+        int x = (int) Math.floor((uv.getX()- Math.floor(uv.getX())) * (imageWidth-1));
+        int y = (int) Math.floor((uv.getY()- Math.floor(uv.getY())) * (imageHeight-1));
         int pixel = imageBuffer.getRGB(x,y);
         double r = ((pixel & 0xff0000) >> 16) / 255.;
         double g = ((pixel & 0xff00) >> 8) / 255.;

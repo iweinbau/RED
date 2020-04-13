@@ -2,7 +2,9 @@ package film;
 
 import math.RGBSpectrum;
 
-public class Pixel {
+import java.io.Serializable;
+
+public class Pixel implements Serializable {
 
     /**
      * RGB spectrum of the pixel.
@@ -20,6 +22,11 @@ public class Pixel {
     public Pixel() {
         this.rgbColor = RGBSpectrum.BLACK;
         this.pixelWeight = 0;
+    }
+
+    public Pixel(RGBSpectrum rgbColor, double pixelWeight) {
+        this.rgbColor = rgbColor;
+        this.pixelWeight = pixelWeight;
     }
 
     /**

@@ -26,8 +26,12 @@ public class BxRDFContainer implements IBxRDF {
     @Override
     public RGBSpectrum f(Vector3D wo, Vector3D wi, Normal normal) {
         RGBSpectrum f = RGBSpectrum.BLACK;
-        for (BxRDF bxrdf:bxRDFS) {
-            f = f.add(bxrdf.f(wo,wi, normal));
+        for (BxRDF bxrdf : this.bxRDFS) {
+            boolean reflect = wi.dot(normal) * wo.dot(normal) > 0;
+            if ( (reflect && (bxrdf.flag & BxrdfType.BSDF_REFLECTION.getFlag()) != 0) ||
+                    (!reflect && (bxrdf.flag & BxrdfType.BSDF_TRANSMISSION.getFlag()) != 0) ) {
+                f = f.add(bxrdf.f(wo, wi, normal));
+            }
         }
         return f;
     }
@@ -67,7 +71,7 @@ public class BxRDFContainer implements IBxRDF {
                 boolean reflect = wi.dot(normal) * wo.dot(normal) > 0;
                 if ( (reflect && (bxrdf.flag & BxrdfType.BSDF_REFLECTION.getFlag()) != 0) ||
                         (!reflect && (bxrdf.flag & BxrdfType.BSDF_TRANSMISSION.getFlag()) != 0) ) {
-                    f = f.add(bxrdf.f(wo, wi, normal));
+                    f = f.add(bxrdf.sample_f(wo, wi, normal));
                 }
             }
         }

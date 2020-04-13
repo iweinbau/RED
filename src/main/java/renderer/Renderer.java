@@ -1,6 +1,7 @@
 package renderer;
 
 import camera.Camera;
+import film.FrameBuffer;
 import film.Tile;
 import integrator.Integrator;
 import math.Point2D;
@@ -106,6 +107,54 @@ public class Renderer implements RenderEventInterface {
         }
 
         stopRender();
+    }
+
+    public FrameBuffer render(Tile tile) {
+        FrameBuffer frameBuffer = new FrameBuffer(tile.getWidth(),tile.getHeight());
+
+        final ExecutorService service = Executors.newFixedThreadPool(Runtime
+                .getRuntime().availableProcessors());
+
+        for (Tile t: tile.subdivide(64,64)) {
+
+            // create a thread which renders the specific tile
+            Thread thread = new Thread( () -> {
+                Sampler sampler = new Stratified(samplesPerPixel);
+                outerLoop:
+                for (int height = t.yStart, i = 0; height < t.yEnd; height++, i++) {
+                    for (int width = t.xStart,j =0; width < t.xEnd; width++, j++) {
+                        if (shouldStop) {
+                            break outerLoop;
+                        }
+
+                        // render pixel height,width
+                        EyeNode eye = new EyeNode(this.camera, width, height);
+
+                        // Once a path has been calculated we have to calculate radiance along it.
+                        // eye radiance is the final value of the pixel.
+                        RGBSpectrum L = integrator.computeRadiance(eye, scene,
+                                sampler);
+
+                        frameBuffer.addPixel(i, j, L, samplesPerPixel);
+                    }
+                }
+
+            });
+
+            service.submit(thread);
+        }
+
+        // execute the threads
+        service.shutdown();
+
+        // wait until the threads have finished
+        try {
+            service.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return frameBuffer;
     }
 
     public void addRenderEventListener(RenderEventListener listener) {

@@ -28,7 +28,7 @@ public class PointLight extends Light{
      * @return
      */
     @Override
-    public RGBSpectrum Li(Vector3D wi) {
+    public RGBSpectrum Li() {
         return I;
     }
 
@@ -44,7 +44,7 @@ public class PointLight extends Light{
      */
     @Override
     public RGBSpectrum scatter(Vector3D wi) {
-        return Li(wi);
+        return Li();
     }
 
     /**

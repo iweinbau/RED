@@ -56,7 +56,7 @@ public abstract class Light {
      * Radiance along direction.
      * @return RGBSpectrum
      */
-    public abstract RGBSpectrum Li(Vector3D wi);
+    public abstract RGBSpectrum Li();
 
     public abstract RGBSpectrum power();
 

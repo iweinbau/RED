@@ -2,6 +2,8 @@ package math;
 
 import core.Constants;
 
+import java.io.Serializable;
+
 public class RGBSpectrum extends Triple<java.lang.Double> {
 
     public static final RGBSpectrum BLACK = new RGBSpectrum(0f);
