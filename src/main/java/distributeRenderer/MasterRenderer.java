@@ -1,10 +1,14 @@
 package distributeRenderer;
 
 import film.FrameBuffer;
+import film.Pixel;
 import film.Tile;
 import film.ViewPlane;
 import gui.ProgressReporter;
 import gui.RenderFrame;
+import math.RGBSpectrum;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import renderer.RenderEventInterface;
 import renderer.RenderEventListener;
 
@@ -44,8 +48,10 @@ public class MasterRenderer {
     /**
      * Image dimensions
      */
-    static int width = 800;
-    static int height = 800;
+    static int width = 200;
+    static int height = 200;
+
+    static int devision = 100;
 
     /**
      * number of attempts on a failed render task
@@ -167,7 +173,7 @@ public class MasterRenderer {
          * Subdivide viewplane and add the tiles to the render queue
          */
         int i = 0;
-        for (Tile tile: vp.subdivide(30,30)) {
+        for (Tile tile: vp.subdivide(devision,devision)) {
             renderQueue.put(i++,tile);
         }
 
@@ -269,33 +275,51 @@ public class MasterRenderer {
 
         System.out.println("Collecting Renderer");
 
-        final ExecutorService service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-
-        while (true){
+        while (!renderQueue.isEmpty()){
 
             // Read header
-            int header = readInt(process.getInputStream());
+            int request_id = readInt(process.getInputStream());
+            if (request_id == -1) {
+                // Nothing left, leave loop
+                break;
+            }
 
-            int length = readInt(process.getInputStream()); //get length of stream
+            int length = readInt(process.getInputStream());
 
-            if(header == -1 || length == -1) break;
-
-            byte[] receivedBuffer = new byte[length];
+            if (length == 0) {
+                break;
+            }
 
             try {
 
-                process.getInputStream().read(receivedBuffer);
+                renderQueue.remove(request_id);
 
-                renderQueue.remove(header);
+                byte[] response = process.getInputStream().readNBytes(length);
+                String string = new String(response,"UTF-8");
+                JSONObject json = new JSONObject(string);
 
-                RenderResponse renderResponse = deserializeTile(receivedBuffer);
+                int startX = json.getInt("startX");
+                int startY = json.getInt("startY");
+                int endX = json.getInt("endX");
+                int endY = json.getInt("endY");
 
-                frameBuffer.addTileToBuffer(renderResponse.xStart,renderResponse.yStart,
-                        renderResponse.xEnd,renderResponse.yEnd,renderResponse.frameBuffer);
+                JSONArray pixelArray = json.getJSONArray("pixels");
+
+                Pixel[] pixels = new Pixel[pixelArray.length()];
+
+                for (int i = 0; i < pixelArray.length(); i++) {
+                    JSONObject pixel  = pixelArray.getJSONObject(i);
+                    pixels[i] = new Pixel(
+                            new RGBSpectrum(pixel.getDouble("r"),
+                            pixel.getDouble("g"),
+                            pixel.getDouble("b")),1);
+                }
+
+                frameBuffer.addTileToBuffer(startX,startY,
+                        endX,endY,pixels);
 
                 for (RenderEventListener listener:renderEventListeners) {
-                    listener.finished(new Tile(renderResponse.xStart,renderResponse.yStart,
-                            renderResponse.xEnd,renderResponse.yEnd));
+                    listener.finished(new Tile(startX,startY,endX,endY));
                 }
 
             } catch (Exception e) {

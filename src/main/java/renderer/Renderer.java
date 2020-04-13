@@ -115,18 +115,13 @@ public class Renderer implements RenderEventInterface {
         final ExecutorService service = Executors.newFixedThreadPool(Runtime
                 .getRuntime().availableProcessors());
 
-        for (Tile t: tile.subdivide(64,64)) {
+        for (Tile t: tile.subdivide(5,5)) {
 
             // create a thread which renders the specific tile
             Thread thread = new Thread( () -> {
                 Sampler sampler = new Stratified(samplesPerPixel);
-                outerLoop:
                 for (int height = t.yStart, i = 0; height < t.yEnd; height++, i++) {
                     for (int width = t.xStart,j =0; width < t.xEnd; width++, j++) {
-                        if (shouldStop) {
-                            break outerLoop;
-                        }
-
                         // render pixel height,width
                         EyeNode eye = new EyeNode(this.camera, width, height);
 
@@ -135,7 +130,7 @@ public class Renderer implements RenderEventInterface {
                         RGBSpectrum L = integrator.computeRadiance(eye, scene,
                                 sampler);
 
-                        frameBuffer.addPixel(i, j, L, samplesPerPixel);
+                        frameBuffer.addPixel(height - tile.yStart, width - tile.xStart, L, samplesPerPixel);
                     }
                 }
 
@@ -150,11 +145,11 @@ public class Renderer implements RenderEventInterface {
         // wait until the threads have finished
         try {
             service.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+            return frameBuffer;
         } catch (InterruptedException e) {
             e.printStackTrace();
+            return frameBuffer;
         }
-
-        return frameBuffer;
     }
 
     public void addRenderEventListener(RenderEventListener listener) {

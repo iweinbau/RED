@@ -44,6 +44,43 @@ public class RED {
 	 * @throws InvocationTargetException
 	 */
 	public static void main(String[] arguments) {
+		System.setOut(new java.io.PrintStream(new java.io.OutputStream() {
+			@Override public void write(int b) {}
+		}) {
+			@Override public void flush() {}
+			@Override public void close() {}
+			@Override public void write(int b) {}
+			@Override public void write(byte[] b) {}
+			@Override public void write(byte[] buf, int off, int len) {}
+			@Override public void print(boolean b) {}
+			@Override public void print(char c) {}
+			@Override public void print(int i) {}
+			@Override public void print(long l) {}
+			@Override public void print(float f) {}
+			@Override public void print(double d) {}
+			@Override public void print(char[] s) {}
+			@Override public void print(String s) {}
+			@Override public void print(Object obj) {}
+			@Override public void println() {}
+			@Override public void println(boolean x) {}
+			@Override public void println(char x) {}
+			@Override public void println(int x) {}
+			@Override public void println(long x) {}
+			@Override public void println(float x) {}
+			@Override public void println(double x) {}
+			@Override public void println(char[] x) {}
+			@Override public void println(String x) {}
+			@Override public void println(Object x) {}
+			@Override public java.io.PrintStream printf(String format, Object... args) { return this; }
+			@Override public java.io.PrintStream printf(java.util.Locale l, String format, Object... args) { return this; }
+			@Override public java.io.PrintStream format(String format, Object... args) { return this; }
+			@Override public java.io.PrintStream format(java.util.Locale l, String format, Object... args) { return this; }
+			@Override public java.io.PrintStream append(CharSequence csq) { return this; }
+			@Override public java.io.PrintStream append(CharSequence csq, int start, int end) { return this; }
+			@Override public java.io.PrintStream append(char c) { return this; }
+		});
+
+
 		int width = 200;
 		int height = 200;
 		double sensitivity = 1.0;
@@ -155,7 +192,7 @@ public class RED {
 		 * Initialize the camera and graphical user interface
 		 *********************************************************************/
 
-		final Renderer renderer = new Renderer(50);
+		final Renderer renderer = new Renderer(10);
 
 		// initialize the progress reporter
 		final ProgressReporter reporter = new ProgressReporter("Rendering", 40,
@@ -196,145 +233,85 @@ public class RED {
 		Transform2D T = new Transform2D();
 		Transform3D lightT = new Transform3D();
 
-//		TriangleMesh mesh = factory.getTriangleMesh("helmets.obj");
-//		BVH bvh = new BVH(objT,mesh,new Matte(
-//				new Color(new RGBSpectrum(1,1,1)),
-//				new Constant(1)));
-//		bvh.buildAccelerationStructure();
-//		scene.addGeometry(bvh);
-//		mesh = factory.getTriangleMesh("soldiers.obj");
-//		bvh = new BVH(objT,mesh,new Matte(
-//				new Color(new RGBSpectrum(0,0,0)),
-//				new Constant(1)));
-//		bvh.buildAccelerationStructure();
-//		scene.addGeometry(bvh);
-//		mesh = factory.getTriangleMesh("box.obj");
-//		bvh = new BVH(objT,mesh,new Matte(
-//				new Color(new RGBSpectrum(0.1,0.1,0.1)),
-//				new Constant(1)));
-//		bvh.buildAccelerationStructure();
-//		scene.addGeometry(bvh);
-//
-//
-//		lightT  = new Transform3D();
-//		lightT.scale(new Vector3D(0.2,1,4));
-//		lightT.rotateY(-30);
-//		lightT.rotateX(180);
-//		lightT.translate(new Point3D(-1,3,0));
-//		Emission emit = new Emission(new RGBSpectrum(0.8,1,1),4);
-//		Quad lObjq = new Quad(lightT, emit);
-//
-//		scene.addGeometry(lObjq);
-//		scene.addLight(new AreaLight(lObjq, emit));
-//		scene.addLight(new EnvironmentLight(new RGBSpectrum(1,0,0)));
-
-//		scene.addGeometry(new Plane(new Transform3D(),new Matte(
-//				new Color(new RGBSpectrum(1)),
-//				new Constant(1))));
-//
-//		// red sphere
-//		Transform3D objT = new Transform3D();
-//		objT.translate(new Point3D(-2,1,0));
-//		scene.addGeometry(new Sphere(objT,new Matte(
-//				new Color(new RGBSpectrum(1,0,0)),
-//				new Constant(1))));
-//
-//
-//		// green sphere
-//		objT = new Transform3D();
-//		objT.translate(new Point3D(0,1,0));
-//		scene.addGeometry(new Sphere(objT,new Matte(
-//				new Color(new RGBSpectrum(0,1,0)),
-//				new Constant(1))));
-//
-//		// blue sphere
-//		objT = new Transform3D();
-//		objT.translate(new Point3D(2,1,0));
-//		scene.addGeometry(new Sphere(objT,new Matte(
-//				new Color(new RGBSpectrum(0,0,1)),
-//				new Constant(1))));
-//
-//		Transform3D lightT = new Transform3D();
-//		lightT.rotateX(100);
-//		lightT.translate(new Point3D(0,3,-4));
-//		Emission emission = new Emission(new RGBSpectrum(1));
-//		Quad quad = new Quad(lightT,emission);
-//
-//		scene.addGeometry(quad);
-//		scene.addLight(new AreaLight(quad,emission));
-
-
-//		Transform2D textureT = new Transform2D();
-//		textureT.scale(1);
-//		Transform3D objectT = new Transform3D();
-//		objectT.rotateX(90);
-//
-//		Transform3D objectTT = new Transform3D();
-//		objectTT.translate(new Point3D(0,0.2,0));
-//		scene.addGeometry(new Quad(objectT,new Matte(
-//		new RGBTexture(
-//				new UVMap(textureT),
-//				textureFactory.getImageTexture("./textures/test.jpg")),
-//		new Constant(1))));
-//
-//
-//		Transform3D lightT = new Transform3D();
-//		lightT.translate(new Point3D(0,0,1));
-//		scene.addLight(new PointLight(new RGBSpectrum(1),lightT));
-//
-//		lightT = new Transform3D();
-//		lightT.translate(new Point3D(0,3,0));
-//		scene.addLight(new PointLight(new RGBSpectrum(1),lightT));
-
-
-		// BOTTOM white floor
-		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1))));
-
-		// TOP white roof
-		objT = new Transform3D();
-		objT.rotateX(180);
-		objT.translate(new Point3D(0,5,0));
-		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1))));
-
-		// BACK white wall
-		objT = new Transform3D();
-		objT.rotateX(90);
-		objT.translate(new Point3D(0,0,-2));
-		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1))));
-
-		// Front white wall
-		objT = new Transform3D();
-		objT.rotateX(90);
-		objT.translate(new Point3D(0,0,5));
-		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1))));
-
-		// RIGHT green wall
-		objT = new Transform3D();
-		objT.rotateZ(90);
-		objT.translate(new Point3D(3,0,0));
-		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(0,1,0)),new Constant(1))));
-
-		// LEFT red wall
-		objT = new Transform3D();
-		objT.rotateZ(-90);
-		objT.translate(new Point3D(-3,0,0));
-		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1))));
-
-		// MIRROR SPHERE
-		objT= new Transform3D();
-		objT.translate(new Point3D(-1,2,0));
-		scene.addGeometry(new Sphere(objT,
-				new Glass(new Color(new RGBSpectrum(1)),new Color(new RGBSpectrum(1)),new Constant(1.5))));
+		TriangleMesh mesh = factory.getTriangleMesh("helmets.obj");
+		BVH bvh = new BVH(objT,mesh,new Matte(
+				new Color(new RGBSpectrum(1,1,1)),
+				new Constant(1)));
+		bvh.buildAccelerationStructure();
+		scene.addGeometry(bvh);
+		mesh = factory.getTriangleMesh("soldiers.obj");
+		bvh = new BVH(objT,mesh,new Matte(
+				new Color(new RGBSpectrum(0,0,0)),
+				new Constant(1)));
+		bvh.buildAccelerationStructure();
+		scene.addGeometry(bvh);
+		mesh = factory.getTriangleMesh("box.obj");
+		bvh = new BVH(objT,mesh,new Matte(
+				new Color(new RGBSpectrum(0.1,0.1,0.1)),
+				new Constant(1)));
+		bvh.buildAccelerationStructure();
+		scene.addGeometry(bvh);
 
 		lightT  = new Transform3D();
-		lightT.scale(new Vector3D(1));
+		lightT.scale(new Vector3D(0.2,1,4));
+		lightT.rotateY(-30);
 		lightT.rotateX(180);
-		lightT.translate(new Point3D(0,4.9999,1));
-		Emission emit = new Emission(new RGBSpectrum(1),5);
+		lightT.translate(new Point3D(-1,3,0));
+		Emission emit = new Emission(new RGBSpectrum(0.8,1,1),4);
 		Quad lObjq = new Quad(lightT, emit);
 
 		scene.addGeometry(lObjq);
-		scene.addLight(new AreaLight(lObjq,emit));
+		scene.addLight(new AreaLight(lObjq, emit));
+		scene.addLight(new EnvironmentLight(new RGBSpectrum(1)));
+
+//		// BOTTOM white floor
+//		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1))));
+//
+//		// TOP white roof
+//		objT = new Transform3D();
+//		objT.rotateX(180);
+//		objT.translate(new Point3D(0,5,0));
+//		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1))));
+//
+//		// BACK white wall
+//		objT = new Transform3D();
+//		objT.rotateX(90);
+//		objT.translate(new Point3D(0,0,-2));
+//		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1))));
+//
+//		// Front white wall
+//		objT = new Transform3D();
+//		objT.rotateX(90);
+//		objT.translate(new Point3D(0,0,5));
+//		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1))));
+//
+//		// RIGHT green wall
+//		objT = new Transform3D();
+//		objT.rotateZ(90);
+//		objT.translate(new Point3D(3,0,0));
+//		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(0,1,0)),new Constant(1))));
+//
+//		// LEFT red wall
+//		objT = new Transform3D();
+//		objT.rotateZ(-90);
+//		objT.translate(new Point3D(-3,0,0));
+//		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1))));
+//
+//		// MIRROR SPHERE
+//		objT= new Transform3D();
+//		objT.translate(new Point3D(-1,2,0));
+//		scene.addGeometry(new Sphere(objT,
+//				new Glass(new Color(new RGBSpectrum(1)),new Color(new RGBSpectrum(1)),new Constant(1.5))));
+//
+//		lightT  = new Transform3D();
+//		lightT.scale(new Vector3D(1));
+//		lightT.rotateX(180);
+//		lightT.translate(new Point3D(0,4.9999,1));
+//		Emission emit = new Emission(new RGBSpectrum(1),5);
+//		Quad lObjq = new Quad(lightT, emit);
+//
+//		scene.addGeometry(lObjq);
+//		scene.addLight(new AreaLight(lObjq,emit));
 
 	}
 
