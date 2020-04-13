@@ -7,7 +7,14 @@ version '1.0-SNAPSHOT'
 sourceCompatibility = 1.8
 
 apply plugin:'application'
-mainClassName = "RED"
+mainClassName = "distributeRenderer.SlaveRenderer"
+
+jar {
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+    baseName = project.name
+}
 
 repositories {
     mavenCentral()
