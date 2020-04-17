@@ -14,8 +14,6 @@ import renderer.RenderEventListener;
 
 import java.io.*;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class MasterRenderer {
 
@@ -48,10 +46,13 @@ public class MasterRenderer {
     /**
      * Image dimensions
      */
-    static int width = 200;
-    static int height = 200;
+    static int width = 400;
+    static int height = 400;
 
-    static int devision = 100;
+    static int devision = 20;
+
+    static double sensitivity = 1.0;
+    static double gamma = 2.2;
 
     /**
      * number of attempts on a failed render task
@@ -66,10 +67,7 @@ public class MasterRenderer {
          * Initialize variables with default values.
          *
          */
-        double sensitivity = 1.0;
-        double gamma = 2.2;
-        boolean gui = true;
-        boolean quiet = true;
+        boolean quiet = false;
         double fov = 90;
 
         /**********************************************************************
@@ -85,8 +83,6 @@ public class MasterRenderer {
                         width = Integer.parseInt(arguments[++i]);
                     else if ("-height".equals(flag))
                         height = Integer.parseInt(arguments[++i]);
-                    else if ("-gui".equals(flag))
-                        gui = Boolean.parseBoolean(arguments[++i]);
                     else if ("-quiet".equals(flag))
                         quiet = Boolean.parseBoolean(arguments[++i]);
                     else if ("-sensitivity".equals(flag))
@@ -97,17 +93,7 @@ public class MasterRenderer {
                         filename = arguments[++i];
                     } else if ("-help".equals(flag)) {
                         System.out
-                                .println("usage: java -jar cgpracticum.jar\n"
-                                        + "  -width <integer>      width of the image\n"
-                                        + "  -height <integer>     height of the image\n"
-                                        + "  -sensitivity <double> scaling factor for the radiance\n"
-                                        + "  -gamma <double>       gamma correction factor\n"
-                                        + "  -origin <point>       origin for the camera\n"
-                                        + "  -destination <point>  destination for the camera\n"
-                                        + "  -lookup <vector>      up direction for the camera\n"
-                                        + "  -output <string>      filename for the image\n"
-                                        + "  -gui <boolean>        whether to start a graphical user interface\n"
-                                        + "  -quiet <boolean>      whether to print the progress bar");
+                                .println("Work in progress");
                         return;
                     } else {
                         System.err.format("unknown flag \"%s\" encountered!\n",
@@ -149,81 +135,122 @@ public class MasterRenderer {
                     + "empty string!");
 
 
-        /**
-         *
-         * Set up a progress reporter
-         *
-         */
-        final ProgressReporter reporter = new ProgressReporter("Rendering", 40,
-                width * height, quiet);
-
-        addRenderEventListener(reporter);
-
-
+        int workToBeDone = 0;
+        boolean startFromFile;
 
         /**
-         *
-         *
-         * Construct a viewplane, this is only used to subdivide the image.
-         *
+         * Check if file exist then we can start the the process from this file.
          */
-        ViewPlane vp = new ViewPlane(width,height);
+        File file = new File("./batch_file.txt");
+        boolean exists = file.exists();
+        if( exists ){
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String line;
+            int tileIndex = 0;
+            while ((line = reader.readLine()) != null) {
+                String[] task = line.split(" ");
+                int startX =0, startY =0, endX =0, endY =0;
+                for (int i = 0; i < task.length; ++i) {
+                    if (task[i].startsWith("-")) {
+                        String flag = task[i];
+                        if ("-width".equals(flag))
+                            width = Integer.parseInt(task[++i]);
+                        else if ("-height".equals(flag))
+                            height = Integer.parseInt(task[++i]);
+                        if ("-startX".equals(flag))
+                            startX = Integer.parseInt(task[++i]);
+                        else if ("-startY".equals(flag))
+                            startY = Integer.parseInt(task[++i]);
+                        else if ("-endX".equals(flag))
+                            endX = Integer.parseInt(task[++i]);
+                        else if ("-endY".equals(flag))
+                            endY = Integer.parseInt(task[++i]);
+                    }
+                }
+                renderQueue.put(tileIndex++,new Tile(startX,startY,endX,endY));
+                workToBeDone += (endX -startX) * (endY -startY);
+            }
+            frameBuffer = FrameBuffer.loadFromImage(filename,gamma);
+            startFromFile = true;
+        } else {
 
-        /**
-         * Subdivide viewplane and add the tiles to the render queue
-         */
-        int i = 0;
-        for (Tile tile: vp.subdivide(devision,devision)) {
-            renderQueue.put(i++,tile);
+            /**
+             *
+             *
+             * Construct a viewplane, this is only used to subdivide the image.
+             *
+             */
+            ViewPlane vp = new ViewPlane(width,height);
+
+            /**
+             * Subdivide viewplane and add the tiles to the render queue
+             */
+            int i = 0;
+            for (Tile tile: vp.subdivide(devision,devision)) {
+                renderQueue.put(i++,tile);
+            }
+            /**
+             *
+             * Construct output frame.
+             *
+             */
+            frameBuffer = new FrameBuffer(width,height);
+
+            workToBeDone = width * height;
+            startFromFile = false;
         }
 
         /**
          *
-         * Construct output frame.
+         * Set up progress reporter
          *
          */
-        frameBuffer = new FrameBuffer(width,height);
+        final ProgressReporter reporter = new ProgressReporter("Rendering", 40,
+                workToBeDone, quiet);
+
+        addRenderEventListener(reporter);
 
         /**
          *
          * Initialize render interface with custom renderEventInterface to start distribute rendering
          */
         RenderFrame userInterface;
-        if (gui) {
-            try {
-                userInterface = RenderFrame.buildRenderFrame(new RenderEventInterface() {
-                    @Override
-                    public void startRender() {
-                        start();
-                    }
+        try {
+            userInterface = RenderFrame.buildRenderFrame(new RenderEventInterface() {
+                @Override
+                public void startRender() {
+                    start();
+                }
 
-                    @Override
-                    public void clearBuffers() {
-                        clear();
-                    }
+                @Override
+                public void clearBuffers() {
+                    clear();
+                }
 
-                    @Override
-                    public void stopRender() {
-                        stop();
-                    }
-                }, gamma, sensitivity);
+                @Override
+                public void stopRender() {
+                    stop();
+                }
+            }, gamma, sensitivity);
 
-                reporter.addProgressListener(userInterface);
+            reporter.addProgressListener(userInterface);
+            addRenderEventListener(userInterface);
 
-                addRenderEventListener(userInterface);
-
-            } catch (Exception e) {
-                e.getStackTrace();
+            /**
+             * Setup buffer for all listeners
+             */
+            for (RenderEventListener listener: renderEventListeners) {
+                listener.notifyBufferChange(frameBuffer);
             }
-        }
 
-        /**
-         * Setup buffer for all listeners
-         */
-        for (RenderEventListener listener: renderEventListeners) {
-            listener.notifyBufferChange(frameBuffer);
-        }
+            // Show already loaded tiles
+            if(startFromFile) {
+                userInterface.finished(new Tile(0,0,width,height));
+            }
 
+        } catch (Exception e) {
+            e.getStackTrace();
+        }
     }
 
     /**
@@ -237,8 +264,8 @@ public class MasterRenderer {
             String batchCommand = String.format("java -jar dependencies/%s",slaveExeName);
             for (Map.Entry<Integer,Tile> entry: renderQueue.entrySet()) {
                 Tile tile = entry.getValue();
-                bashWriter.write(String.format("%s -width %d -height %d -startX %d -startY %d -endX %d -endY %d",batchCommand,
-                        width,height,tile.xStart,tile.yStart,tile.xEnd,tile.yEnd));
+                bashWriter.write(String.format("%s -width %d -height %d -startX %d -startY %d -endX %d -endY %d",
+                        batchCommand, width, height, tile.xStart, tile.yStart, tile.xEnd, tile.yEnd));
                 bashWriter.newLine();
             }
             bashWriter.close();
@@ -273,7 +300,7 @@ public class MasterRenderer {
      */
     public static void collector(Process process) {
 
-        System.out.println("Collecting Renderer");
+        System.out.println("Collecting");
 
         while (!renderQueue.isEmpty()){
 
@@ -286,7 +313,7 @@ public class MasterRenderer {
 
             int length = readInt(process.getInputStream());
 
-            if (length == 0) {
+            if (length <= 0) {
                 break;
             }
 
@@ -328,7 +355,6 @@ public class MasterRenderer {
             }
         }
 
-        System.out.println();
         System.out.println("End Collecting");
     }
 
@@ -375,11 +401,12 @@ public class MasterRenderer {
         for (RenderEventListener listener: renderEventListeners) {
             listener.notifyStartRender();
         }
+
         System.out.println("Starting Renderer");
 
         int attempts = 0;
         while (!renderQueue.isEmpty() && attempts++ < renderAttempts){
-            System.out.println("attempt: "+ attempts+ " nodes left: " + renderQueue.size());
+            System.out.println("attempt: " + attempts + ", nodes left: " + renderQueue.size());
             prepareDistribution();
             Process process = startDistribution();
             if (process == null)
@@ -387,12 +414,7 @@ public class MasterRenderer {
             collector(process);
         }
 
-        stop();
-        try {
-            frameBuffer.writeBufferToImage(filename,1.0,2.2);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        done();
     }
 
     /**
@@ -403,7 +425,8 @@ public class MasterRenderer {
     }
 
     public static void stop() {
-        System.out.println("Stop Rendering");
+        System.out.println("Stop rendering!");
+
         for (RenderEventListener listener: renderEventListeners) {
             listener.notifyStopRender();
         }
@@ -412,17 +435,24 @@ public class MasterRenderer {
             Runtime.getRuntime().exec("python3 anet/anet.py --killall \"java -jar RED\" ");
         } catch (IOException e) {
             e.printStackTrace();
-            System.err.println("Could not stop!");
+        }
+    }
+
+    public static void done() {
+        System.out.println("Done!");
+
+        for (RenderEventListener listener: renderEventListeners) {
+            listener.notifyStopRender();
+        }
+
+        try {
+            frameBuffer.writeBufferToImage(filename,sensitivity,gamma);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     public static void addRenderEventListener(RenderEventListener listener){
         renderEventListeners.add(listener);
-    }
-
-    public static RenderResponse deserializeTile(byte[] data) throws IOException, ClassNotFoundException {
-        ByteArrayInputStream in = new ByteArrayInputStream(data);
-        ObjectInputStream is = new ObjectInputStream(in);
-        return (RenderResponse) is.readObject();
     }
 }
