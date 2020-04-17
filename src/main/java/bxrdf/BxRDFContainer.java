@@ -56,7 +56,6 @@ public class BxRDFContainer implements IBxRDF {
                 }
             }
         }
-
         return pdf/this.bxRDFS.size();
     }
 
@@ -71,7 +70,7 @@ public class BxRDFContainer implements IBxRDF {
                 boolean reflect = wi.dot(normal) * wo.dot(normal) > 0;
                 if ( (reflect && (bxrdf.flag & BxrdfType.BSDF_REFLECTION.getFlag()) != 0) ||
                         (!reflect && (bxrdf.flag & BxrdfType.BSDF_TRANSMISSION.getFlag()) != 0) ) {
-                    f = f.add(bxrdf.sample_f(wo, wi, normal));
+                    f = f.add(bxrdf.f(wo, wi, normal));
                 }
             }
         }
@@ -81,7 +80,7 @@ public class BxRDFContainer implements IBxRDF {
     @Override
     public Vector3D sample_wi(Vector3D wo, Normal normal,Point2D u) {
         // 1. pick a random brdf.
-        int bsdfIndex = Math.min((int)Math.floor(u.getX() * this.bxRDFS.size()), this.bxRDFS.size() - 1);
+        int bsdfIndex = Math.min((int)Math.floor(u.getX() + u.getY() * this.bxRDFS.size()), this.bxRDFS.size() - 1);
         sampledBRDF = this.bxRDFS.get(bsdfIndex);
 
         // 2. sample direction for this brdf.

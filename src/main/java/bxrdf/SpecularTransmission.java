@@ -1,6 +1,7 @@
 package bxrdf;
 
 import bxrdf.fresnel.FresnelDielectric;
+import bxrdf.fresnel.NoFresnel;
 import math.Normal;
 import math.Point2D;
 import math.RGBSpectrum;
@@ -12,6 +13,7 @@ public class SpecularTransmission extends BxRDF {
 
     FresnelDielectric fresnel;
 
+    boolean internalReflection = false;
 
     // Index of refraction above and under the surface
     double etaAbove;
@@ -32,9 +34,7 @@ public class SpecularTransmission extends BxRDF {
 
     @Override
     public RGBSpectrum sample_f(Vector3D wo, Vector3D wi, Normal normal) {
-        if (wi.isZero())
-            return new RGBSpectrum(0);
-        return  cTransmit.scale((1 - fresnel.eval(normal.dot(wi)))/normal.absDot(wi));
+        return  cTransmit.scale(1 - fresnel.eval(normal.dot(wi))).scale(1./normal.absDot(wi));
     }
 
     @Override
@@ -45,10 +45,12 @@ public class SpecularTransmission extends BxRDF {
         double etaT = entering ? etaBelow : etaAbove;
 
         // 2. Make sure the normal is in same direction as wo.
-        Normal n = normal.dot(wo) < 0.f ? normal.neg().toNormal(): normal;
+        Normal n = (normal.dot(wo) < 0.f) ? normal.neg().toNormal() : normal;
 
         // 3. refract incoming direction using snell's law.
-        return wo.refract(n,etaI/etaT);
+        Vector3D wi = wo.refract(n,etaI/etaT);
+
+        return wi;
     }
 
     /**

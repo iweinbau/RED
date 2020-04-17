@@ -1,8 +1,11 @@
 package pathnode;
 
 import bxrdf.BxrdfType;
+import core.Constants;
 import core.Ray;
+import geometry.BVH;
 import geometry.Geometry;
+import geometry.Triangle;
 import material.Emission;
 import math.*;
 import scene.Scene;
@@ -32,14 +35,22 @@ public class SurfaceNode extends ScatterNode {
         if (BSRDF.numComponents() == 0)
             return null;
         Vector3D wi = BSRDF.sample_wi(wo,normal,sample);
-        Ray ray = new Ray(this.position,wi);
+        if (wi == null)
+            return null;
+
+        Point3D pos = this.position.add(wi.scale(Constants.kEps));
+
+        Ray ray = new Ray(pos,wi);
 
         ScatterNode scatterNode = trace(scene,ray);
+        // expand node and update of next node, throughput: next.throughput = this.scatterLight;
+        scatterNode.throughput = this.scatter_f(wi);
+
+        if(scatterNode.throughput.isZero())
+            return null;
         successors.add(scatterNode);
 
         scatterNode.parent = this;
-        // expand node and update of next node, throughput: next.throughput = this.scatterLight;
-        scatterNode.throughput = this.scatter_f(wi);
 
         return scatterNode;
     }
@@ -60,8 +71,9 @@ public class SurfaceNode extends ScatterNode {
         if( BSRDF.numComponents() == 0) {
             return RGBSpectrum.BLACK;
         }
-        return throughput.multiply(BSRDF.sample_f(this.wo,wi,this.normal)
-                .scale(this.normal.absDot(wi)/this.BSRDF.pdf(wo,wi,normal)));
+        RGBSpectrum f = BSRDF.sample_f(wo,wi,this.normal);
+        double pdf = BSRDF.pdf(wo,wi,normal);
+        return throughput.multiply(f).scale(this.normal.absDot(wi)/pdf);
     }
 
     @Override

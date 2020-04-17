@@ -106,15 +106,14 @@ public class Triangle extends Geometry implements Primitive {
                 uv = new Point2D();
             }
         }
-        else {
+        else { ;
             normal = n0;
             uv = new Point2D();
         }
 
         // we intersect this triangle
-        Point3D localHit = p0.add(p1.subtract(p0).scale(beta)).add(p2.subtract(p0).scale(gamma))
-                .add(normal.scale(Constants.kEps));
-        Point3D globalHit = transform.localToGlobal(localHit).add(normal.scale(Constants.kEps));
+        Point3D localHit = p0.add(p1.subtract(p0).scale(beta)).add(p2.subtract(p0).scale(gamma));
+        Point3D globalHit = transform.localToGlobal(localHit);
 
         hitRecord.setIntersection(ray.getDirection().neg(),
                 this,localHit,globalHit,uv,transform.localToGlobal(normal).normalize().toNormal(),t);

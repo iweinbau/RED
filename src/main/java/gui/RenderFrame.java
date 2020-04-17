@@ -190,6 +190,7 @@ public class RenderFrame extends JFrame implements ProgressListener, RenderEvent
 
 		// Determine the size and center
 		pack();
+		center();
 	}
 
 	@Override

@@ -48,6 +48,8 @@ public class PathIntegrator extends Integrator {
                         break;
                     }
 
+                    //TODO: add Russian roulette.
+
                 }else {
                     for (Light light : scene.getLights()) {
                         L = L.add(light.Le(scatterNode.rayFormParent()).multiply(scatterNode.getThroughput()));

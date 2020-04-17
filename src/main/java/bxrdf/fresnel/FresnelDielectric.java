@@ -1,9 +1,5 @@
 package bxrdf.fresnel;
 
-import material.Material;
-import math.RGBSpectrum;
-import math.Vector3D;
-
 public class FresnelDielectric extends Fresnel {
 
     double etaI, etaT;
@@ -23,19 +19,18 @@ public class FresnelDielectric extends Fresnel {
             etaI = etaT;
             etaT = tmp;
             cosThetaI = Math.abs(cosThetaI);
-
         }
 
         double sinThetaI = Math.sqrt(Math.max(0, 1 - cosThetaI * cosThetaI));
         double sinThetaT =  etaI/etaT * sinThetaI;
 
-        if (sinThetaT >= 1) return 1;
+        if (sinThetaT >= 1) return 0;
         double cosThetaT = Math.sqrt(Math.max(0, 1 - sinThetaT * sinThetaT));
 
         double rParallel =  ((etaT * cosThetaI) - (etaI * cosThetaT)) /
                             ((etaT * cosThetaI) + (etaI * cosThetaT));
         double rPerpendicular = ((etaI * cosThetaI) - (etaT * cosThetaT)) /
                                 ((etaI * cosThetaI) + (etaT * cosThetaT));
-        return (rParallel * rParallel + rPerpendicular * rPerpendicular) / 2;
+        return (rParallel * rParallel + rPerpendicular * rPerpendicular) * 0.5;
     }
 }

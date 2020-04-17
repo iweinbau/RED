@@ -45,7 +45,7 @@ public class PathTracer extends Integrator {
                 // Check for surface node
                 if (scatterNode.isSurfaceNode()) {
 
-                    if (depth == 0 || scatterNode.isSpecularBounce()) {
+                    if (depth == 0 || scatterNode.isFromSpecularBounce()) {
                         // Add area light contribution.
                         L = L.add(scatterNode.Le());
                     }
@@ -60,8 +60,10 @@ public class PathTracer extends Integrator {
                         break;
                     }
 
+                    //TODO: add Russian roulette.
+
                 } else {
-                    if (depth == 0 || scatterNode.isSpecularBounce()) {
+                    if (depth == 0 || scatterNode.isFromSpecularBounce()) {
                         for (Light light : scene.getLights()) {
                             L = L.add(light.Le(scatterNode.rayFormParent()).multiply(scatterNode.getThroughput()));
                         }

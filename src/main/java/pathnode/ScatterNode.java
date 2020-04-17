@@ -40,7 +40,7 @@ public abstract class ScatterNode extends PathNode {
         this.BSRDF.addBxRDF(bxRDF);
     }
 
-    public boolean isSpecularBounce() {
+    public boolean isFromSpecularBounce() {
         if (this.parent.BSRDF.numComponents() <= 0 || this.parent.BSRDF.sampledBRDF == null)
             return false;
         return (this.parent.BSRDF.sampledBRDF.flag & BxrdfType.BSDF_SPECULAR.getFlag()) != 0;

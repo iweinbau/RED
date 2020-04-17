@@ -45,7 +45,7 @@ public class HitRecord {
     /**
      * Interacted geometry.
      */
-    Geometry geometry;
+    public Geometry geometry;
 
     Point2D uv;
 

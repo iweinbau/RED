@@ -41,7 +41,7 @@ public abstract class Triple<T extends Serializable> implements Serializable {
     }
 
     public boolean isZero() {
-        return this.x.equals(0) && this.y.equals(0) && this.z.equals(0);
+        return this.equals(new Vector3D(0));
     }
 
     @Override

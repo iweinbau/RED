@@ -50,11 +50,10 @@ public class Renderer implements RenderEventInterface {
 
         shouldStop = false;
 
-
         final ExecutorService service = Executors.newFixedThreadPool(Runtime
                 .getRuntime().availableProcessors());
 
-        for (Tile tile: this.camera.getVp().subdivide(64,64)) {
+        for (Tile tile: this.camera.getVp().subdivide(20,20)) {
 
             // create a thread which renders the specific tile
             Thread thread = new Thread( () -> {
@@ -85,7 +84,6 @@ public class Renderer implements RenderEventInterface {
 
             });
 
-            //TODO: fix exception for multithreading
             Future future = service.submit(thread);
 //            try {
 //                future.get();
@@ -112,6 +110,13 @@ public class Renderer implements RenderEventInterface {
     public FrameBuffer render(Tile tile) {
         FrameBuffer frameBuffer = new FrameBuffer(tile.getWidth(),tile.getHeight());
 
+        if( this.camera == null)
+            throw new IllegalStateException("No Camera available!");
+        if( this.scene == null)
+            throw new IllegalStateException("No Scene available!");
+        if (this.integrator == null)
+            throw new IllegalStateException("No Integrator available!");
+
         final ExecutorService service = Executors.newFixedThreadPool(Runtime
                 .getRuntime().availableProcessors());
 
@@ -121,7 +126,7 @@ public class Renderer implements RenderEventInterface {
             Thread thread = new Thread( () -> {
                 Sampler sampler = new Stratified(samplesPerPixel);
                 for (int height = t.yStart, i = 0; height < t.yEnd; height++, i++) {
-                    for (int width = t.xStart,j =0; width < t.xEnd; width++, j++) {
+                    for (int width = t.xStart,j = 0; width < t.xEnd; width++, j++) {
                         // render pixel height,width
                         EyeNode eye = new EyeNode(this.camera, width, height);
 
@@ -162,7 +167,6 @@ public class Renderer implements RenderEventInterface {
         for (RenderEventListener listener: renderEventListeners) {
             listener.notifyStartRender();
         }
-
         this.render();
     }
 

@@ -18,7 +18,7 @@ public abstract class Geometry implements ITransform3D {
     /**
      * Material of this geometry.
      */
-    final Material material;
+    public Material material;
 
     /**
      * Base constructor

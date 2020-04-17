@@ -33,7 +33,7 @@ public class Composite extends Geometry {
      * @param material material
      */
     public Composite(Transform3D transform, TriangleMesh mesh, Material material) {
-        super(transform, material);
+        super(new Transform3D(), material);
         int [] indices = mesh.getIndices();
         for (int i = 0; i < indices.length; i+=3) {
             addGeometry( new Triangle(indices[i], indices[i+1], indices[i+2], mesh, transform, material));

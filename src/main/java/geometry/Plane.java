@@ -56,7 +56,11 @@ public class Plane extends Geometry {
             Point3D globalHitPoint = ray.getPointAlongRay(t);
             Point2D uv = new Point2D(localPoint.getX() - Math.floor(localPoint.getX()),
                     localPoint.getZ() - Math.floor(localPoint.getZ()));
-            hitRecord.setIntersection(ray.getDirection().neg(),this,localPoint,globalHitPoint,uv,planeNormal,t);
+            Normal n = planeNormal;
+            if( n.dot(ray.getDirection().neg()) < 0){
+                n = n.neg().toNormal();
+            }
+            hitRecord.setIntersection(ray.getDirection().neg(),this,localPoint,globalHitPoint,uv,n,t);
             return true;
         }
         return false;

@@ -54,6 +54,21 @@ public class FrameBuffer {
         }
     }
 
+    public static FrameBuffer loadFromImage(String filename, double gamma) throws IOException {
+        BufferedImage imageBuffer = ImageIO.read(new File(filename));
+        FrameBuffer buffer = new FrameBuffer(imageBuffer.getWidth(),imageBuffer.getHeight());
+        for(int i = 0; i < buffer.getBufferWidth(); i++) {
+            for (int j = 0 ; j < buffer.getBufferHeight(); j++) {
+                int pixel = imageBuffer.getRGB(i,j);
+                double r = ((pixel & 0xff0000) >> 16) / 255.;
+                double g = ((pixel & 0xff00) >> 8) / 255.;
+                double b = ((pixel & 0xff)) / 255.;
+                buffer.addPixel(buffer.getBufferHeight()-j-1,i,new RGBSpectrum(Math.pow(r,gamma),Math.pow(g,gamma),Math.pow(b,gamma)));
+            }
+        }
+        return buffer;
+    }
+
     /**
      *
      * Return the Pixel at given position.

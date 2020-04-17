@@ -273,6 +273,7 @@ public class OBJLoader extends MeshLoader {
                 duplicate = new Vertex(currentVertex.position,vertices.size());
                 duplicate.setUvIndex(uvIndex);
                 duplicate.setNormalIndex(normalIndex);
+                duplicate.setUv(currentVertex.hasUv);
                 currentVertex.setDuplicate(duplicate);
                 vertices.add(duplicate);
                 indices.add(duplicate.index);

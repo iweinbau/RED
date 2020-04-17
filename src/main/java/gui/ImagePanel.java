@@ -164,7 +164,7 @@ public class ImagePanel extends JPanel implements ComponentListener,
 				BufferedImage.TYPE_INT_ARGB);
 
 		// Update GUI.
-		this.repaint();
+		repaint(0,0,buffer.bufferHeight,buffer.bufferWidth);
 
 	}
 
