@@ -34,7 +34,12 @@ public class SpecularTransmission extends BxRDF {
 
     @Override
     public RGBSpectrum sample_f(Vector3D wo, Vector3D wi, Normal normal) {
-        return  cTransmit.scale(1 - fresnel.eval(normal.dot(wi))).scale(1./normal.absDot(wi));
+        boolean entering = normal.dot(wo) > 0;
+        double etaI = entering ? etaAbove : etaBelow;
+        double etaT = entering ? etaBelow : etaAbove;
+
+        return  cTransmit.scale((etaI * etaI) / (etaT * etaT))
+                .scale(1 - fresnel.eval(normal.dot(wi))).scale(1./normal.absDot(wi));
     }
 
     @Override

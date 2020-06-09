@@ -310,4 +310,8 @@ public class ViewPlane {
     public Tile getTile() {
         return new Tile(0,0,verticalRes,horizontalRes);
     }
+
+    public void rawBufferToFile(String fileName) throws IOException {
+        this.buffer.rawBufferToFile(fileName);
+    }
 }

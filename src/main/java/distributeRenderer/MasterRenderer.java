@@ -8,6 +8,7 @@ import gui.ProgressReporter;
 import gui.RenderFrame;
 import math.RGBSpectrum;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import renderer.RenderEventInterface;
 import renderer.RenderEventListener;
@@ -41,7 +42,7 @@ public class MasterRenderer {
     /**
      * Output file name
      */
-    static String filename = "output.png";
+    static String filename = "./output_scene_4/reference_indirect.png";
 
     /**
      * Image dimensions
@@ -59,6 +60,7 @@ public class MasterRenderer {
      */
     static int renderAttempts = 5;
 
+    static boolean startFromBatch = false;
 
     public static void main(String[] arguments) throws IOException {
 
@@ -81,6 +83,8 @@ public class MasterRenderer {
                 try {
                     if ("-width".equals(flag))
                         width = Integer.parseInt(arguments[++i]);
+                    else if("-batch".equals(flag))
+                        startFromBatch = true;
                     else if ("-height".equals(flag))
                         height = Integer.parseInt(arguments[++i]);
                     else if ("-quiet".equals(flag))
@@ -136,14 +140,13 @@ public class MasterRenderer {
 
 
         int workToBeDone = 0;
-        boolean startFromFile;
 
         /**
          * Check if file exist then we can start the the process from this file.
          */
         File file = new File("./batch_file.txt");
         boolean exists = file.exists();
-        if( exists ){
+        if( exists & startFromBatch){
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String line;
             int tileIndex = 0;
@@ -171,7 +174,6 @@ public class MasterRenderer {
                 workToBeDone += (endX -startX) * (endY -startY);
             }
             frameBuffer = FrameBuffer.loadFromImage(filename,gamma);
-            startFromFile = true;
         } else {
 
             /**
@@ -197,7 +199,6 @@ public class MasterRenderer {
             frameBuffer = new FrameBuffer(width,height);
 
             workToBeDone = width * height;
-            startFromFile = false;
         }
 
         /**
@@ -244,7 +245,7 @@ public class MasterRenderer {
             }
 
             // Show already loaded tiles
-            if(startFromFile) {
+            if(startFromBatch) {
                 userInterface.finished(new Tile(0,0,width,height));
             }
 
@@ -318,37 +319,40 @@ public class MasterRenderer {
             }
 
             try {
-
-                renderQueue.remove(request_id);
-
                 byte[] response = process.getInputStream().readNBytes(length);
                 String string = new String(response,"UTF-8");
-                JSONObject json = new JSONObject(string);
+                try {
+                    JSONObject json = new JSONObject(string);
 
-                int startX = json.getInt("startX");
-                int startY = json.getInt("startY");
-                int endX = json.getInt("endX");
-                int endY = json.getInt("endY");
+                    renderQueue.remove(request_id);
 
-                JSONArray pixelArray = json.getJSONArray("pixels");
+                    int startX = json.getInt("startX");
+                    int startY = json.getInt("startY");
+                    int endX = json.getInt("endX");
+                    int endY = json.getInt("endY");
 
-                Pixel[] pixels = new Pixel[pixelArray.length()];
+                    JSONArray pixelArray = json.getJSONArray("pixels");
 
-                for (int i = 0; i < pixelArray.length(); i++) {
-                    JSONObject pixel  = pixelArray.getJSONObject(i);
-                    pixels[i] = new Pixel(
-                            new RGBSpectrum(pixel.getDouble("r"),
-                            pixel.getDouble("g"),
-                            pixel.getDouble("b")),1);
+                    Pixel[] pixels = new Pixel[pixelArray.length()];
+
+                    for (int i = 0; i < pixelArray.length(); i++) {
+                        JSONObject pixel  = pixelArray.getJSONObject(i);
+                        pixels[i] = new Pixel(
+                                new RGBSpectrum(pixel.getDouble("r"),
+                                        pixel.getDouble("g"),
+                                        pixel.getDouble("b")),1);
+                    }
+
+                    frameBuffer.addTileToBuffer(startX,startY,
+                            endX,endY,pixels);
+
+                    for (RenderEventListener listener:renderEventListeners) {
+                        listener.finished(new Tile(startX,startY,endX,endY));
+                    }
+                }catch (JSONException e) {
+                    e.printStackTrace();
+                    continue;
                 }
-
-                frameBuffer.addTileToBuffer(startX,startY,
-                        endX,endY,pixels);
-
-                for (RenderEventListener listener:renderEventListeners) {
-                    listener.finished(new Tile(startX,startY,endX,endY));
-                }
-
             } catch (Exception e) {
                 e.printStackTrace();
 
@@ -447,6 +451,7 @@ public class MasterRenderer {
 
         try {
             frameBuffer.writeBufferToImage(filename,sensitivity,gamma);
+            frameBuffer.rawBufferToFile("./output_scene_4/reference_indirect");
         } catch (IOException e) {
             e.printStackTrace();
         }

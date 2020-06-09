@@ -8,6 +8,8 @@ import pathnode.ScatterNode;
 import sampler.Sampler;
 import scene.Scene;
 
+import java.util.List;
+
 /**
  * Class for making an approximation of the render equation
  */
@@ -26,6 +28,15 @@ public abstract class Integrator {
      * @return RGBSpectrum computed radiance.
      */
     public abstract RGBSpectrum computeRadiance(EyeNode eyeNode, Scene scene, Sampler sampler);
+
+    /**
+     *
+     * @param eyeNode starting node in path.
+     * @param scene scene to trace rays in.
+     * @param depth
+     * @return RGBSpectrum computed radiance.
+     */
+    public abstract RGBSpectrum computeRadiance(EyeNode eyeNode, Scene scene, Sampler sampler, int depth);
 
 
     // TODO: add other way of sampling lights eg. sampleOneLight or sampleAllLights

@@ -16,6 +16,10 @@ public class RGBSpectrum extends Triple<java.lang.Double> {
         super(x, y, z);
     }
 
+    public RGBSpectrum(int x, int y, int z) {
+        super(x/255., y/255., z/255.);
+    }
+
     public RGBSpectrum(double x) {
         super(x, x, x);
     }

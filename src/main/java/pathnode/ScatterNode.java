@@ -49,4 +49,6 @@ public abstract class ScatterNode extends PathNode {
     public Normal getNormal() {
         return this.normal;
     }
+
+
 }

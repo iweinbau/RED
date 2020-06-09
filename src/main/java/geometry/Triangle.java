@@ -106,7 +106,7 @@ public class Triangle extends Geometry implements Primitive {
                 uv = new Point2D();
             }
         }
-        else { ;
+        else {
             normal = n0;
             uv = new Point2D();
         }

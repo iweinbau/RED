@@ -46,6 +46,8 @@ public abstract class PathNode{
      */
     RGBSpectrum throughput;
 
+    double branch_factor = 1;
+
     /**
      *
      * Parent node, null if no parent exist.
@@ -88,6 +90,13 @@ public abstract class PathNode{
      *
      */
     public abstract ScatterNode expand(Scene scene, Point2D sample);
+
+    /**
+     *
+     * Expand path with a new node.
+     *
+     */
+    public abstract ScatterNode expand(Scene scene, Point2D sample,double branch);
 
     public ScatterNode trace(Scene scene,Ray ray) {
         HitRecord hitRecord = scene.traceRay(ray);

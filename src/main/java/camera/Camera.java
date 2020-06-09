@@ -144,4 +144,7 @@ public abstract class Camera {
         this.vp.clear();
     }
 
+    public void rawBufferToFile(String fileName) throws IOException {
+        this.vp.rawBufferToFile(fileName);
+    }
 }

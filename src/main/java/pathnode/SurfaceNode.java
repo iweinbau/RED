@@ -48,6 +48,34 @@ public class SurfaceNode extends ScatterNode {
 
         if(scatterNode.throughput.isZero())
             return null;
+
+        successors.add(scatterNode);
+
+        scatterNode.parent = this;
+
+        return scatterNode;
+    }
+
+    @Override
+    public ScatterNode expand(Scene scene, Point2D sample, double branch) {
+        // bxRDF is null this node is on a light surface.
+        if (BSRDF.numComponents() == 0)
+            return null;
+        Vector3D wi = BSRDF.sample_wi(wo,normal,sample);
+        if (wi == null)
+            return null;
+
+        Point3D pos = this.position.add(wi.scale(Constants.kEps));
+
+        Ray ray = new Ray(pos,wi);
+
+        ScatterNode scatterNode = trace(scene,ray);
+        // expand node and update of next node, throughput: next.throughput = this.scatterLight;
+        scatterNode.throughput = this.scatter_f(wi).scale(1./branch);
+
+        if(scatterNode.throughput.isZero())
+            return null;
+
         successors.add(scatterNode);
 
         scatterNode.parent = this;
@@ -73,7 +101,7 @@ public class SurfaceNode extends ScatterNode {
         }
         RGBSpectrum f = BSRDF.sample_f(wo,wi,this.normal);
         double pdf = BSRDF.pdf(wo,wi,normal);
-        return throughput.multiply(f).scale(this.normal.absDot(wi)/pdf);
+        return throughput.multiply(f).scale(this.normal.absDot(wi)/(pdf));
     }
 
     @Override

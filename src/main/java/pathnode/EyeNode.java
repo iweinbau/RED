@@ -38,11 +38,16 @@ public class EyeNode extends PathNode {
     }
 
     @Override
+    public ScatterNode expand(Scene scene, Point2D sample, double branch) {
+        return expand(scene,sample);
+    }
+
+    @Override
     public ScatterNode expand(Scene scene, Point2D sample) {
         ScatterNode scatterNode = trace(scene,camera.getCameraRay(this.sample(sample)));
         this.successors.add(scatterNode);
 
-        scatterNode.throughput = new RGBSpectrum(1);
+        scatterNode.throughput = new RGBSpectrum(1.);
         scatterNode.parent = this;
 
         return scatterNode;

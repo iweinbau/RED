@@ -21,6 +21,11 @@ public class BackgroundNode extends ScatterNode {
     }
 
     @Override
+    public ScatterNode expand(Scene scene, Point2D sample, double branch) {
+        throw new NotImplementedException();
+    }
+
+    @Override
     public ScatterNode expand(Scene scene, Point2D sample) {
         throw new NotImplementedException();
     }

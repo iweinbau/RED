@@ -21,7 +21,7 @@ import parser.MeshFactory;
 import parser.OBJLoader;
 import parser.TextureFactory;
 import renderer.Renderer;
-import scene.Scene;
+import scene.*;
 import textures.*;
 import textures.texturemap.CylindricalMap;
 import textures.texturemap.PlanarMap;
@@ -57,7 +57,7 @@ public class RED {
 //		Point3D origin = new Point3D(0,1,2.5);
 //		Point3D destination = new Point3D(0.5,0.5,0);
 
-		Point3D origin = new Point3D(0,2,3);
+		Point3D origin = new Point3D(0,2,3.5);
 		Point3D destination = new Point3D(0,2,0);
 
 		Vector3D lookup = new Vector3D(0,1,0);
@@ -161,7 +161,7 @@ public class RED {
 		 * Initialize the camera and graphical user interface
 		 *********************************************************************/
 
-		final Renderer renderer = new Renderer(10);
+		final Renderer renderer = new Renderer(100);
 
 		// initialize the progress reporter
 		final ProgressReporter reporter = new ProgressReporter("Rendering", 40,
@@ -185,147 +185,14 @@ public class RED {
 		 * Initialize the scene
 		 *********************************************************************/
 
-		final PerspectiveCamera camera = new PerspectiveCamera(origin,
-				destination,width,height,fov);
 
-		final Scene scene = new Scene();
+		SceneBuilder builder = new Cave();
+		builder.buildScene();
+		builder.buildCamera(width,height);
 
-		final MeshFactory factory = new MeshFactory();
-		final TextureFactory textureFactory = new TextureFactory();
-
-		renderer.setScene(scene);
-		renderer.setCamera(camera);
+		renderer.setScene(builder.getScene());
+		renderer.setCamera(builder.getCamera());
 		renderer.setIntegrator(new PathTracer());
-
-
-		Transform3D objT = new Transform3D();
-		Transform2D T = new Transform2D();
-		Transform3D lightT = new Transform3D();
-
-//		TriangleMesh mesh = factory.getTriangleMesh("helmets.obj");
-//		BVH bvh = new BVH(objT,mesh,new Matte(
-//				new Color(new RGBSpectrum(1,1,1)),
-//				new Constant(1)));
-//		bvh.buildAccelerationStructure();
-//		scene.addGeometry(bvh);
-//		mesh = factory.getTriangleMesh("soldiers.obj");
-//		bvh = new BVH(objT,mesh,new Matte(
-//				new Color(new RGBSpectrum(0,0,0)),
-//				new Constant(1)));
-//		bvh.buildAccelerationStructure();
-//		scene.addGeometry(bvh);
-//		mesh = factory.getTriangleMesh("box.obj");
-//		bvh = new BVH(objT,mesh,new Matte(
-//				new Color(new RGBSpectrum(0.1,0.1,0.1)),
-//				new Constant(1)));
-//		bvh.buildAccelerationStructure();
-//		scene.addGeometry(bvh);
-//
-//		lightT  = new Transform3D();
-//		lightT.scale(new Vector3D(0.2,1,4));
-//		lightT.rotateY(-30);
-//		lightT.rotateX(180);
-//		lightT.translate(new Point3D(-1,3,0));
-//		Emission emit = new Emission(new RGBSpectrum(0.8,1,1),4);
-//		Quad lObjq = new Quad(lightT, emit);
-//
-//		scene.addGeometry(lObjq);
-//		scene.addLight(new AreaLight(lObjq, emit));
-//		scene.addLight(new EnvironmentLight(new RGBSpectrum(1)));
-
-
-
-
-		// BOTTOM white floor
-		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1))));
-
-		// TOP white roof
-		objT = new Transform3D();
-		objT.rotateX(180);
-		objT.translate(new Point3D(0,5,0));
-		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1))));
-
-		// BACK white wall
-		objT = new Transform3D();
-		objT.rotateX(90);
-		objT.translate(new Point3D(0,0,-2));
-		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1))));
-
-		// Front white wall
-		objT = new Transform3D();
-		objT.rotateX(90);
-		objT.rotateY(180);
-		objT.translate(new Point3D(0,0,5));
-		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1))));
-
-		// RIGHT green wall
-		objT = new Transform3D();
-		objT.rotateZ(90);
-		objT.translate(new Point3D(3,0,0));
-		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(0,1,0)),new Constant(1))));
-
-		// LEFT red wall
-		objT = new Transform3D();
-		objT.rotateZ(-90);
-		objT.translate(new Point3D(-3,0,0));
-		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1))));
-
-		// MIRROR SPHERE
-		objT= new Transform3D();
-		objT.translate(new Point3D(-1,2,0));
-		scene.addGeometry(new Sphere(objT,
-				new Glass(new Color(new RGBSpectrum(1)),new Color(new RGBSpectrum(1)),new Constant(1.5))));
-
-
-//		TriangleMesh mesh = factory.getTriangleMesh("teapot.obj");
-//		objT = new Transform3D();
-//		objT.rotateZ(-20);
-//		objT.rotateY(-45);
-//		objT.scale(1);
-//		objT.translate(new Point3D(0,1,0));
-//		BVH bvh = new BVH(objT,mesh,
-//				new Glass(new Color(new RGBSpectrum(1)),new Color(new RGBSpectrum(1)),new Constant(1.5)));
-//		bvh.buildAccelerationStructure();
-//		scene.addGeometry(bvh);
-
-		lightT  = new Transform3D();
-		lightT.scale(new Vector3D(1));
-		lightT.rotateX(180);
-		lightT.translate(new Point3D(0,4.9999,1));
-		Emission emit = new Emission(new RGBSpectrum(1),4);
-		Quad lObjq = new Quad(lightT, emit);
-
-		scene.addGeometry(lObjq);
-		scene.addLight(new AreaLight(lObjq,emit));
-
-
-
-//		TriangleMesh mesh = factory.getTriangleMesh("teapot.obj");
-//		objT = new Transform3D();
-//		objT.scale(1);
-//		objT.rotateY(180);
-//		objT.translate(new Point3D(-.5,0,0));
-//		BVH bvh = new BVH(objT,mesh,
-//				new Glass(new Color(new RGBSpectrum(1)),new Color(new RGBSpectrum(1)),new Constant(1.5)));
-//		bvh.buildAccelerationStructure();
-//		scene.addGeometry(bvh);
-//
-//		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(0.6))));
-//
-//		objT = new Transform3D();
-//		objT.rotateZ(90);
-//		objT.translate(new Point3D(3,0,0));
-//		scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(0.6))));
-//
-//		lightT  = new Transform3D();
-//		lightT.scale(new Vector3D(0.5));
-//		lightT.rotateZ(-90);
-//		lightT.translate(new Point3D(-3,0.5,0));
-//		Emission emit = new Emission(new RGBSpectrum(1),5);
-//		Quad lObjq = new Quad(lightT, emit);
-//
-//		scene.addGeometry(lObjq);
-//		scene.addLight(new AreaLight(lObjq,emit));
 
 	}
 

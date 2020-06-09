@@ -6,9 +6,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.awt.image.WritableRaster;
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
+import java.util.Locale;
 
 /**
  * Class representing collection of pixel values.
@@ -214,7 +213,7 @@ public class FrameBuffer {
     public void rgbToGrayMap(double maxDepth) {
         for (int i = 0; i < this.bufferHeight; i++){
             for (int j = 0; j < this.bufferWidth; j++){
-                pixels[i][j].setRgbColor(new RGBSpectrum(1).subtract(pixels[i][j].getSpectrum().scale(1./maxDepth)));
+                pixels[i][j].setRgbColor(new RGBSpectrum(1.).subtract(pixels[i][j].getSpectrum().scale(1./maxDepth)));
             }
         }
     }
@@ -239,5 +238,39 @@ public class FrameBuffer {
 
     public Pixel[][] getPixels() {
         return this.pixels;
+    }
+
+    public void rawBufferToFile(String fileName) throws IOException {
+
+        BufferedWriter rBufferedWriter = new BufferedWriter(
+                new FileWriter(String.format("%s_r.txt",fileName), false));
+        BufferedWriter gBufferedWriter = new BufferedWriter(
+                new FileWriter(String.format("%s_g.txt",fileName), false));
+        BufferedWriter bBufferedWriter = new BufferedWriter(
+                new FileWriter(String.format("%s_b.txt",fileName), false));
+
+        for (int y = 0; y < bufferHeight; ++y) {
+            for (int x = 0; x < bufferWidth; ++x) {
+                Pixel pixel = getPixel(y,x);
+                RGBSpectrum spectrum = pixel.getSpectrum();
+                rBufferedWriter.write(
+                        String.format(Locale.US,"%f8 ",
+                                (spectrum.getX())));
+                gBufferedWriter.write(
+                        String.format(Locale.US,"%f8 ",
+                                (spectrum.getY())));
+                bBufferedWriter.write(
+                        String.format(Locale.US,"%f8 ",
+                                (spectrum.getZ())));
+            }
+            rBufferedWriter.newLine();
+            gBufferedWriter.newLine();
+            bBufferedWriter.newLine();
+
+        }
+
+        rBufferedWriter.close();
+        gBufferedWriter.close();
+        bBufferedWriter.close();
     }
 }

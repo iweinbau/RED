@@ -157,6 +157,73 @@ public class Renderer implements RenderEventInterface {
         }
     }
 
+    public void renderDepth(int depth) {
+        if( this.camera == null)
+            throw new IllegalStateException("No Camera available!");
+        if( this.scene == null)
+            throw new IllegalStateException("No Scene available!");
+        if (this.integrator == null)
+            throw new IllegalStateException("No Integrator available!");
+
+        shouldStop = false;
+
+        final ExecutorService service = Executors.newFixedThreadPool(Runtime
+                .getRuntime().availableProcessors());
+
+        for (Tile tile: this.camera.getVp().subdivide(20,20)) {
+
+            // create a thread which renders the specific tile
+            Thread thread = new Thread( () -> {
+                Sampler sampler = new Stratified(samplesPerPixel);
+                outerLoop:
+                for (int height = tile.yStart, i = 0; height < tile.yEnd; height++, i++) {
+                    for (int width = tile.xStart, j =0; width < tile.xEnd; width++, j++) {
+                        if (shouldStop) {
+                            break outerLoop;
+                        }
+
+                        // render pixel height,width
+                        EyeNode eye = new EyeNode(this.camera, width, height);
+
+                        // Once a path has been calculated we have to calculate radiance along it.
+                        // eye radiance is the final value of the pixel.
+                        RGBSpectrum L = integrator.computeRadiance(eye, scene,
+                                sampler,depth);
+
+                        //TODO: test if L is valid!
+                        this.camera.getVp().addColor(height, width, L,samplesPerPixel);
+                    }
+                }
+
+                for (RenderEventListener listener: renderEventListeners) {
+                    listener.finished(tile);
+                }
+
+            });
+
+            Future future = service.submit(thread);
+//            try {
+//                future.get();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            } catch (ExecutionException e) {
+//                e.printStackTrace();
+//            }
+        }
+
+        // execute the threads
+        service.shutdown();
+
+        // wait until the threads have finished
+        try {
+            service.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        stopRender();
+    }
+
     public void addRenderEventListener(RenderEventListener listener) {
         this.renderEventListeners.add(listener);
     }

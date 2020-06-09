@@ -17,9 +17,7 @@ public class DirectLightIntegrator extends Integrator {
     /**
      * Construct new DirectLightIntegrator
      */
-    public DirectLightIntegrator() {
-
-    }
+    public DirectLightIntegrator() {}
 
     /**
      *
@@ -51,4 +49,8 @@ public class DirectLightIntegrator extends Integrator {
         return L;
     }
 
+    @Override
+    public RGBSpectrum computeRadiance(EyeNode eyeNode, Scene scene, Sampler sampler, int depth) {
+        return RGBSpectrum.BLACK;
+    }
 }

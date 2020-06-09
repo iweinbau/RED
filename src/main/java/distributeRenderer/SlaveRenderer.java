@@ -1,33 +1,25 @@
 package distributeRenderer;
 
-import camera.PerspectiveCamera;
 import film.FrameBuffer;
 import film.Pixel;
 import film.Tile;
-import geometry.*;
 import integrator.PathTracer;
-import light.AreaLight;
-import material.Emission;
-import material.Glass;
-import material.Matte;
 import math.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import parser.MeshFactory;
 import parser.TextureFactory;
 import renderer.Renderer;
-import scene.Scene;
-import textures.Color;
-import textures.Constant;
+import scene.GlassTeapot;
+import scene.ReflectiveCylinder;
+import scene.SceneBuilder;
+import scene.TestScene1;
 import java.io.IOException;
 import java.io.PrintStream;
 
 public class SlaveRenderer {
 
     private static PrintStream DEFAULT_OUTPUT;
-
-    final static MeshFactory factory = new MeshFactory();
-    final static TextureFactory textureFactory = new TextureFactory();
 
     public static void main(String[] arguments) throws IOException {
 
@@ -83,13 +75,6 @@ public class SlaveRenderer {
                         + "This will be skipped!\n", arguments[i]);
         }
 
-        //Point3D origin = new Point3D(0,2,4);
-        //Point3D destination = new Point3D(0,2,0);
-
-        Point3D origin = new Point3D(0,1,2.5);
-        Point3D destination = new Point3D(0.5,0.5,0);
-
-
         Vector3D lookup = new Vector3D(0,1,0);
         double fov = 90;
 
@@ -106,21 +91,16 @@ public class SlaveRenderer {
          * Create new renderer
          *
          */
-        final Renderer renderer = new Renderer(100);
-
-        /**
-         *
-         * Create new camera from settings.
-         *
-         */
-        final PerspectiveCamera camera = new PerspectiveCamera(origin,destination,width,height,fov);
+        final Renderer renderer = new Renderer(10000);
 
         /**
          *
          * Initialize empty scene.
          *
          */
-        final Scene scene = new Scene();
+        SceneBuilder builder = new GlassTeapot();
+        builder.buildCamera(width,height);
+        builder.buildScene();
 
         /**
          *
@@ -128,98 +108,10 @@ public class SlaveRenderer {
          * Set render settings
          *
          */
-        renderer.setScene(scene);
-        renderer.setCamera(camera);
+        renderer.setScene(builder.getScene());
+        renderer.setCamera(builder.getCamera());
         renderer.setIntegrator(new PathTracer());
 
-        /**
-         *
-         *
-         * Populate scene
-         *
-         */
-        Transform3D objT = new Transform3D();
-        Transform2D T = new Transform2D();
-        Transform3D lightT = new Transform3D();
-
-//        // BOTTOM white floor
-//        scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1))));
-//
-//        // TOP white roof
-//        objT = new Transform3D();
-//        objT.rotateX(180);
-//        objT.translate(new Point3D(0,5,0));
-//        scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1))));
-//
-//        // BACK white wall
-//        objT = new Transform3D();
-//        objT.rotateX(90);
-//        objT.translate(new Point3D(0,0,-2));
-//        scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1))));
-//
-//        // Front white wall
-//        objT = new Transform3D();
-//        objT.rotateX(90);
-//        objT.rotateY(180);
-//        objT.translate(new Point3D(0,0,5));
-//        scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(1))));
-//
-//        // RIGHT green wall
-//        objT = new Transform3D();
-//        objT.rotateZ(90);
-//        objT.translate(new Point3D(3,0,0));
-//        scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(0,1,0)),new Constant(1))));
-//
-//        // LEFT red wall
-//        objT = new Transform3D();
-//        objT.rotateZ(-90);
-//        objT.translate(new Point3D(-3,0,0));
-//        scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1,0,0)),new Constant(1))));
-//
-//        // MIRROR SPHERE
-//        objT= new Transform3D();
-//        objT.translate(new Point3D(-1,2,0));
-//        scene.addGeometry(new Sphere(objT,
-//                new Glass(new Color(new RGBSpectrum(1)),new Color(new RGBSpectrum(1)),new Constant(1.5))));
-//
-//        lightT  = new Transform3D();
-//        lightT.scale(new Vector3D(1));
-//        lightT.rotateX(180);
-//        lightT.translate(new Point3D(0,4.9999,1));
-//        Emission emit = new Emission(new RGBSpectrum(1),5);
-//        Quad lObjq = new Quad(lightT, emit);
-//
-//        scene.addGeometry(lObjq);
-//        scene.addLight(new AreaLight(lObjq,emit));
-
-
-
-        TriangleMesh mesh = factory.getTriangleMesh("teapot.obj");
-        objT = new Transform3D();
-        objT.scale(1);
-        objT.rotateY(180);
-        objT.translate(new Point3D(-.5,0,0));
-        BVH bvh = new BVH(objT,mesh,
-                new Glass(new Color(new RGBSpectrum(1)),new Color(new RGBSpectrum(1)),new Constant(1.5)));
-        bvh.buildAccelerationStructure();
-        scene.addGeometry(bvh);
-
-        scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(0.6))));
-
-        objT = new Transform3D();
-        objT.rotateZ(90);
-        objT.translate(new Point3D(3,0,0));
-        scene.addGeometry(new Plane(objT,new Matte(new Color(new RGBSpectrum(1)),new Constant(0.6))));
-
-        lightT  = new Transform3D();
-        lightT.scale(new Vector3D(1));
-        lightT.rotateZ(-90);
-        lightT.translate(new Point3D(-3,0.5,0));
-        Emission emit = new Emission(new RGBSpectrum(1),5);
-        Quad lObjq = new Quad(lightT, emit);
-
-        scene.addGeometry(lObjq);
-        scene.addLight(new AreaLight(lObjq,emit));
 
         /**
          *
